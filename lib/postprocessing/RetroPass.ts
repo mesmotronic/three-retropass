@@ -30,12 +30,12 @@ export interface RetroShaderUniforms {
 }
 
 /**
- * Generates a color palette based on the specified color count
+ * Creates a color palette based on the specified color count
  * @param colorCount - Number of colors in the palette (2, 4, 16, or 256)
  * @returns Array of THREE.Color objects representing the palette
  * @throws Error if colorCount is invalid
  */
-export function getColorPalette(colorCount: ColorCount): THREE.Color[] {
+export function createColorPalette(colorCount: ColorCount): THREE.Color[] {
   switch (colorCount) {
     case 2:
       return [
@@ -94,7 +94,7 @@ export function getColorPalette(colorCount: ColorCount): THREE.Color[] {
  * @param colors - Array of THREE.Color objects to convert to texture
  * @returns THREE.DataTexture containing the color palette
  */
-function createPaletteTexture(colors: THREE.Color[]): THREE.DataTexture {
+export function createPaletteTexture(colors: THREE.Color[]): THREE.DataTexture {
   const width = colors.length;
   const height = 1;
   const data = new Uint8Array(width * 3);
@@ -129,7 +129,7 @@ export const RetroShader: {
     tDiffuse: { value: null },
     resolution: { value: new THREE.Vector2(320, 200) },
     colorCount: { value: 16 },
-    paletteTexture: { value: createPaletteTexture(getColorPalette(16)) },
+    paletteTexture: { value: createPaletteTexture(createColorPalette(16)) },
     dithering: { value: true },
   },
   vertexShader: /* glsl */ `
@@ -192,8 +192,9 @@ export const RetroShader: {
  * Post-processing pass for applying a retro-style effect with color quantization and dithering
  */
 export class RetroPass extends ShaderPass {
-  pixelRatio: number;
-  private paletteTexture: THREE.DataTexture;
+  #pixelRatio!: number;
+  paletteTexture!: THREE.DataTexture;
+  #colorPalette!: THREE.Color[];
 
   /**
    * Creates a new RetroPass instance
@@ -201,12 +202,12 @@ export class RetroPass extends ShaderPass {
    */
   constructor(parameters: RetroPassParameters = {}) {
     super(RetroShader);
-    this.pixelRatio = parameters.pixelRatio !== undefined ? parameters.pixelRatio : 0;
+    this.#pixelRatio = parameters.pixelRatio !== undefined ? parameters.pixelRatio : 0;
 
     const defaults: Required<RetroPassParameters> = {
       resolution: new THREE.Vector2(320, 200),
       colorCount: 16,
-      colorPalette: getColorPalette(16),
+      colorPalette: createColorPalette(16),
       dithering: true,
       pixelRatio: 0,
     };
@@ -216,20 +217,129 @@ export class RetroPass extends ShaderPass {
     if (![2, 4, 16, 256].includes(params.colorCount)) {
       console.warn('colorCount must be 2, 4, 16, or 256. Defaulting to 16.');
       params.colorCount = 16;
-      params.colorPalette = getColorPalette(16);
+      params.colorPalette = createColorPalette(16);
     }
-
-    if (params.colorPalette.length !== params.colorCount) {
-      console.warn('colorPalette length does not match colorCount. Using default palette.');
-      params.colorPalette = getColorPalette(params.colorCount);
-    }
-
-    this.paletteTexture = createPaletteTexture(params.colorPalette);
 
     this.uniforms.resolution.value.copy(params.resolution);
     this.uniforms.colorCount.value = params.colorCount;
-    this.uniforms.paletteTexture.value = this.paletteTexture;
     this.uniforms.dithering.value = params.dithering;
+
+    // Use colorPalette setter to initialize palette and texture
+    this.colorPalette = params.colorPalette;
+  }
+
+  /**
+   * Gets the pixel ratio
+   */
+  get pixelRatio(): number {
+    return this.#pixelRatio;
+  }
+
+  /**
+   * Sets the pixel ratio and updates resolution if applicable
+   * @param value - New pixel ratio
+   */
+  set pixelRatio(value: number) {
+    this.#pixelRatio = value;
+  }
+
+  /**
+   * Gets the resolution uniform
+   */
+  get resolution(): THREE.Vector2 {
+    return this.uniforms.resolution.value;
+  }
+
+  /**
+   * Sets the resolution uniform
+   * @param value - New resolution vector
+   */
+  set resolution(value: THREE.Vector2) {
+    if (!(value instanceof THREE.Vector2)) {
+      console.warn('Resolution must be a THREE.Vector2. Ignoring update.');
+      return;
+    }
+    this.uniforms.resolution.value.copy(value);
+  }
+
+  /**
+   * Gets the color count uniform
+   */
+  get colorCount(): number {
+    return this.uniforms.colorCount.value;
+  }
+
+  /**
+   * Sets the color count uniform and updates the palette to match, if different
+   * @param value - New color count (2, 4, 16, or 256)
+   */
+  set colorCount(value: number) {
+    if (value === this.uniforms.colorCount.value) {
+      return;
+    }
+    if (![2, 4, 16, 256].includes(value)) {
+      console.warn('colorCount must be 2, 4, 16, or 256. Ignoring update.');
+      return;
+    }
+    this.uniforms.colorCount.value = value;
+    this.colorPalette = createColorPalette(value as ColorCount);
+  }
+
+  /**
+   * Gets the dithering uniform
+   */
+  get dithering(): boolean {
+    return this.uniforms.dithering.value;
+  }
+
+  /**
+   * Sets the dithering uniform
+   * @param value - New dithering state
+   */
+  set dithering(value: boolean) {
+    this.uniforms.dithering.value = value;
+  }
+
+  /**
+   * Gets the current color palette
+   * @returns Array of THREE.Color objects representing the current palette
+   */
+  get colorPalette(): THREE.Color[] {
+    return this.#colorPalette;
+  }
+
+  /**
+   * Sets a new color palette and updates colorCount if the palette size changes
+   * @param colors - Array of THREE.Color objects for the new palette
+   */
+  set colorPalette(colors: THREE.Color[]) {
+    if (!colors.length) {
+      console.warn('Color palette cannot be empty. Ignoring update.');
+      return;
+    }
+    if (!colors.every(color => color instanceof THREE.Color)) {
+      console.warn('All palette entries must be THREE.Color objects. Ignoring update.');
+      return;
+    }
+
+    const validCounts: ColorCount[] = [2, 4, 16, 256];
+    const newCount = validCounts.includes(colors.length as ColorCount)
+      ? colors.length
+      : validCounts.reduce((prev, curr) =>
+        Math.abs(curr - colors.length) < Math.abs(prev - colors.length) ? curr : prev
+      );
+
+    if (newCount !== this.uniforms.colorCount.value) {
+      this.uniforms.colorCount.value = newCount;
+    }
+
+    const newTexture = createPaletteTexture(colors);
+    if (this.uniforms.paletteTexture.value) {
+      this.uniforms.paletteTexture.value.dispose();
+    }
+    this.uniforms.paletteTexture.value = newTexture;
+    this.paletteTexture = newTexture;
+    this.#colorPalette = colors.slice(); // Store a copy to avoid external modifications
   }
 
   /**
@@ -238,25 +348,8 @@ export class RetroPass extends ShaderPass {
    * @param height - New height in pixels
    */
   setSize(width: number, height: number): void {
-    if (this.pixelRatio && this.pixelRatio > 0) {
-      this.uniforms.resolution.value.set(width * this.pixelRatio, height * this.pixelRatio);
+    if (this.#pixelRatio && this.#pixelRatio > 0) {
+      this.uniforms.resolution.value.set(width * this.#pixelRatio, height * this.#pixelRatio);
     }
-  }
-
-  /**
-   * Updates the color palette used in the retro effect
-   * @param colors - Array of THREE.Color objects for the new palette
-   */
-  setPalette(colors: THREE.Color[]): void {
-    if (colors.length !== this.uniforms.colorCount.value) {
-      console.warn('New palette length does not match colorCount. Ignoring update.');
-      return;
-    }
-    const newTexture = createPaletteTexture(colors);
-    this.uniforms.paletteTexture.value = newTexture;
-    if (this.paletteTexture) {
-      this.paletteTexture.dispose();
-    }
-    this.paletteTexture = newTexture;
   }
 }
