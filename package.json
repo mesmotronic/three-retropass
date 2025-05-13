@@ -1,0 +1,54 @@
+{
+  "name": "@mesmotronic/three-retropass",
+  "author": "Neil Rackett",
+  "license": "BSD-3-Clause",
+  "description": "RetroPass applies a retro aesthetic to your Three.js project, emulating the visual style of classic 8-bit and 16-bit games",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "dist/main.js",
+  "types": "dist/main.d.ts",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mesmotronic/three-retropass.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "three",
+    "threejs",
+    "retro",
+    "atari",
+    "nintendo",
+    "pixel art"
+  ],
+  "bugs": {
+    "url": "https://github.com/mesmotronic/three-retropass/issues"
+  },
+  "homepage": "https://github.com/mesmotronic/three-retropass#readme",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b ./tsconfig.lib.json && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "prepublish": "npm run build"
+  },
+  "peerDependencies": {
+    "three": ">=0.128.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@types/node": "^22.13.4",
+    "@types/three": "^0.176.0",
+    "eslint": "^9.17.0",
+    "globals": "^15.14.0",
+    "typescript": "~5.6.2",
+    "typescript-eslint": "^8.18.2",
+    "vite": "^6.0.5",
+    "vite-plugin-dts": "^4.5.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
