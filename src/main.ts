@@ -21,12 +21,28 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 document.body.appendChild(renderer.domElement);
 
-// Create 10 spheres with random colors and positions
+// Define a curated palette of bright and medium-shade colors
+const sphereColors = [
+  new THREE.Color(1.0, 0.2, 0.2), // Bright Red
+  new THREE.Color(0.2, 1.0, 0.2), // Bright Green
+  new THREE.Color(0.2, 0.4, 1.0), // Bright Blue
+  new THREE.Color(1.0, 0.8, 0.2), // Yellow
+  new THREE.Color(0.8, 0.2, 0.8), // Purple
+  new THREE.Color(1.0, 0.5, 0.2), // Orange
+  new THREE.Color(0.2, 0.8, 0.8), // Cyan
+  new THREE.Color(0.8, 0.2, 0.6), // Magenta
+  new THREE.Color(0.6, 0.8, 0.2), // Lime
+  new THREE.Color(0.2, 0.6, 0.6), // Teal
+];
+
+// Create 10 spheres with highly metallic, shiny materials
 const spheres: THREE.Mesh[] = [];
-const geometry = new THREE.SphereGeometry(0.5, 32, 32);
+const geometry = new THREE.SphereGeometry(1, 32, 32);
 for (let i = 0; i < 10; i++) {
   const material = new THREE.MeshStandardMaterial({
-    color: new THREE.Color(Math.random(), Math.random(), Math.random()),
+    color: sphereColors[i], // Assign color from palette
+    metalness: 0.9, // Nearly fully metallic for bright, reflective look
+    roughness: 0.05, // Very low roughness for mirror-like shininess
   });
   const sphere = new THREE.Mesh(geometry, material);
   sphere.position.set(
@@ -39,11 +55,17 @@ for (let i = 0; i < 10; i++) {
 }
 
 // Add lighting
-const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.6); // Brighter ambient for base illumination
 scene.add(ambientLight);
-const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-directionalLight.position.set(5, 5, 5);
-scene.add(directionalLight);
+const directionalLight1 = new THREE.DirectionalLight(0xffffff, 2.0); // Strong primary light
+directionalLight1.position.set(5, 5, 10); // Adjusted for broader coverage
+scene.add(directionalLight1);
+const directionalLight2 = new THREE.DirectionalLight(0xffffff, 1.7); // Stronger secondary light
+directionalLight2.position.set(-5, -5, 10); // Adjusted for broader coverage
+scene.add(directionalLight2);
+const pointLight = new THREE.PointLight(0xffffff, 0.5, 20); // Dynamic highlights
+pointLight.position.set(0, 0, 8);
+scene.add(pointLight);
 
 // OrbitControls
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -61,7 +83,7 @@ const retroParams: RetroPassParameters = {
   colorCount: 16,
   colorPalette: createColorPalette(16),
   dithering: true,
-  pixelRatio: 1,
+  pixelRatio: 0,
 };
 const retroPass = new RetroPass(retroParams);
 composer.addPass(retroPass);
@@ -73,8 +95,11 @@ document.body.appendChild(stats.dom);
 // GUI
 const gui = new GUI();
 const retroFolder = gui.addFolder('RetroPass Parameters');
+retroFolder.add({ enabled: retroPass.enabled }, 'enabled').name('Enabled').onChange((value: boolean) => {
+  retroPass.enabled = value;
+});
 retroFolder.add({ colorCount: retroPass.colorCount }, 'colorCount', [2, 4, 16, 256]).name('Color Count').onChange((value: number) => {
-  retroPass.colorCount = value; // Setter updates palette automatically
+  retroPass.colorCount = value;
 });
 retroFolder.add({ dithering: retroPass.dithering }, 'dithering').name('Dithering').onChange((value: boolean) => {
   retroPass.dithering = value;
@@ -87,7 +112,6 @@ retroFolder.add({ resolutionY: retroPass.resolution.y }, 'resolutionY', 100, 720
 });
 retroFolder.add({ pixelRatio: retroPass.pixelRatio }, 'pixelRatio', 0, 2, 0.1).name('Pixel Ratio').onChange((value: number) => {
   retroPass.pixelRatio = value;
-  // No need for setSize, handled by composer
 });
 // Add palette selector
 const paletteOptions = {

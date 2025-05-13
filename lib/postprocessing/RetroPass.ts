@@ -92,25 +92,26 @@ export function createColorPalette(colorCount: ColorCount): THREE.Color[] {
 /**
  * Creates a DataTexture from an array of THREE.Color objects
  * @param colors - Array of THREE.Color objects to convert to texture
- * @returns THREE.DataTexture containing the color palette
+ * @returns THREE.DataTexture containing the color palette in RGBA format
  */
 export function createPaletteTexture(colors: THREE.Color[]): THREE.DataTexture {
   const width = colors.length;
   const height = 1;
-  const data = new Uint8Array(width * 3);
+  const data = new Uint8Array(width * 4); // RGBA: 4 components per pixel
 
   for (let i = 0; i < colors.length; i++) {
     const color = colors[i];
-    data[i * 3] = Math.floor(color.r * 255);
-    data[i * 3 + 1] = Math.floor(color.g * 255);
-    data[i * 3 + 2] = Math.floor(color.b * 255);
+    data[i * 4] = Math.floor(color.r * 255); // R
+    data[i * 4 + 1] = Math.floor(color.g * 255); // G
+    data[i * 4 + 2] = Math.floor(color.b * 255); // B
+    data[i * 4 + 3] = 255; // A (fully opaque)
   }
 
   const texture = new THREE.DataTexture(
     data,
     width,
     height,
-    THREE.RGBFormat,
+    THREE.RGBAFormat, // Use RGBA instead of RGB
     THREE.UnsignedByteType
   );
   texture.needsUpdate = true;
@@ -164,7 +165,7 @@ export const RetroShader: {
       float luminance = dot(color, vec3(0.299, 0.587, 0.114));
       float index = clamp(luminance * float(colorCount), 0.0, float(colorCount - 1));
       float u = (index + 0.5) / float(colorCount);
-      return texture2D(paletteTexture, vec2(u, 0.5)).rgb;
+      return texture2D(paletteTexture, vec2(u, 0.5)).rgb; // Use .rgb to ignore alpha
     }
 
     vec3 ditheredColor(vec3 color, vec2 uv) {
@@ -176,7 +177,7 @@ export const RetroShader: {
         index = min(index + 1, colorCount - 1);
       }
       float u = (float(index) + 0.5) / float(colorCount);
-      return texture2D(paletteTexture, vec2(u, 0.5)).rgb;
+      return texture2D(paletteTexture, vec2(u, 0.5)).rgb; // Use .rgb to ignore alpha
     }
 
     void main() {
@@ -192,7 +193,7 @@ export const RetroShader: {
  * Post-processing pass for applying a retro-style effect with color quantization and dithering
  */
 export class RetroPass extends ShaderPass {
-  #pixelRatio!: number;
+  #pixelRatio: number;
   paletteTexture!: THREE.DataTexture;
   #colorPalette!: THREE.Color[];
 
