@@ -210,16 +210,6 @@ export class RetroPass extends ShaderPass {
   }
 
   /**
-   * Whether or not to apply dithering
-   */
-  public get dithering(): boolean {
-    return this.uniforms.dithering.value;
-  }
-  public set dithering(value: boolean) {
-    this.uniforms.dithering.value = value;
-  }
-
-  /**
    * The current color palette
    */
   public get colorPalette(): THREE.Color[] {
@@ -240,6 +230,20 @@ export class RetroPass extends ShaderPass {
     this.#colorPalette = colors.slice();
   }
 
+  /**
+   * Whether or not to apply dithering
+   */
+  public get dithering(): boolean {
+    return this.uniforms.dithering.value;
+  }
+  public set dithering(value: boolean) {
+    this.uniforms.dithering.value = value;
+  }
+
+  /**
+   * Set the pixel resolution to use (used by EffectComposer)
+   * @see {@link RetroPass.resolution}
+   */
   public setSize(width: number, height: number): void {
     const { pixelRatio } = this;
     if (pixelRatio) {

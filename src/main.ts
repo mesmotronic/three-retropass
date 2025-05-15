@@ -1,11 +1,11 @@
-import './main.css';
 import * as THREE from 'three';
+import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+import Stats from 'three/addons/libs/stats.module.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
-import { RetroPass, RetroPassParameters, ColorCount, createColorPalette } from '../lib/postprocessing/RetroPass';
-import Stats from 'three/addons/libs/stats.module.js';
-import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+import { createColorPalette, RetroPass, RetroPassParameters } from '../lib/postprocessing/RetroPass';
+import './main.css';
 
 // Scene setup
 const scene = new THREE.Scene();
@@ -113,17 +113,13 @@ retroFolder.add({ resolutionY: retroPass.resolution.y }, 'resolutionY', 100, 720
 retroFolder.add({ pixelRatio: retroPass.pixelRatio }, 'pixelRatio', 0, 2, 0.1).name('Pixel Ratio').onChange((value: number) => {
   retroPass.pixelRatio = value;
 });
-// Add palette selector
-const paletteOptions = {
-  palette: 'Default',
-};
-const palettes = {
-  Default: () => retroPass.colorPalette, // Use getter for current palette
+const palettes: { [key: string]: THREE.Color[] | null; } = {
+  Default: null,
   Custom4: [
     new THREE.Color(0.0, 0.0, 0.0), // Black
     new THREE.Color(0.0, 1.0, 1.0), // Cyan
-    new THREE.Color(1.0, 0.0, 1.0), // Magenta
-    new THREE.Color(1.0, 1.0, 1.0), // White
+    new THREE.Color(1.0, 0.0, 0.0), // Red
+    new THREE.Color(0.0, 1.0, 0.0), // Green
   ],
   Custom16: [
     new THREE.Color(0.0, 0.0, 0.0),
@@ -144,10 +140,8 @@ const palettes = {
     new THREE.Color(0.0, 1.0, 1.0),
   ],
 };
-retroFolder.add(paletteOptions, 'palette', Object.keys(palettes)).name('Palette').onChange((value: string) => {
-  const paletteKey = value as keyof typeof palettes; // Explicitly cast value
-  const palette = typeof palettes[paletteKey] === 'function' ? palettes[paletteKey]() : palettes[paletteKey];
-  retroPass.colorPalette = palette;
+retroFolder.add({ colorPalette: 'Default' }, 'colorPalette', Object.keys(palettes)).name('Color Palette').onChange((value: string) => {
+  retroPass.colorPalette = palettes[value] ?? createColorPalette(retroPass.colorCount);
 });
 
 // Handle window resize
