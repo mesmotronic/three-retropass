@@ -29,6 +29,7 @@ export interface RetroShaderUniforms {
   colorCount: IUniform<number>;
   colorTexture: IUniform<THREE.DataTexture>;
   dithering: IUniform<boolean>;
+  ditheringOffset: IUniform<number>;
 }
 
 /**
@@ -39,38 +40,38 @@ export function createColorPalette(colorCount: ColorCount): THREE.Color[] {
     // Monochrome
     case 2:
       return [
-        new THREE.Color(0.0, 0.0, 0.0), // Black
-        new THREE.Color(1.0, 1.0, 1.0), // White
+        new THREE.Color(0x000000), // Black
+        new THREE.Color(0xFFFFFF), // White
       ];
 
     // CGA mode 1
     case 4:
       return [
-        new THREE.Color(0.0, 0.0, 0.0), // Black
-        new THREE.Color(0.0, 1.0, 1.0), // Cyan
-        new THREE.Color(1.0, 0.0, 1.0), // Magenta
-        new THREE.Color(1.0, 1.0, 1.0), // White
+        new THREE.Color(0x000000), // Black
+        new THREE.Color(0x00AAAA), // Cyan
+        new THREE.Color(0xAA00AA), // Magenta
+        new THREE.Color(0xFFFFFF), // White
       ];
 
-    // Original web safe palette
+    // Microsoft Windows Standard VGA 16 Color Palette
     case 16:
       return [
-        new THREE.Color(0.0, 0.0, 0.0), // #000000
-        new THREE.Color(0.2, 0.2, 0.2), // #333333
-        new THREE.Color(0.4, 0.4, 0.4), // #666666
-        new THREE.Color(0.6, 0.6, 0.6), // #999999
-        new THREE.Color(0.8, 0.8, 0.8), // #CCCCCC
-        new THREE.Color(1.0, 0.0, 0.0), // #FF0000
-        new THREE.Color(0.0, 1.0, 0.0), // #00FF00
-        new THREE.Color(0.0, 0.2, 0.0), // #003300
-        new THREE.Color(0.0, 0.4, 0.0), // #006600
-        new THREE.Color(0.0, 0.6, 0.0), // #009900
-        new THREE.Color(0.0, 0.8, 0.0), // #00CC00
-        new THREE.Color(0.0, 0.0, 1.0), // #0000FF
-        new THREE.Color(1.0, 1.0, 1.0), // #FFFFFF
-        new THREE.Color(1.0, 0.2, 0.2), // #FF3333
-        new THREE.Color(1.0, 0.4, 0.4), // #FF6666
-        new THREE.Color(1.0, 0.6, 0.6), // #FF9999
+        new THREE.Color(0x000000), // Black
+        new THREE.Color(0x0000AA), // Blue
+        new THREE.Color(0x00AA00), // Green
+        new THREE.Color(0x00AAAA), // Cyan
+        new THREE.Color(0xAA0000), // Red
+        new THREE.Color(0xAA00AA), // Magenta
+        new THREE.Color(0xAA5500), // Brown
+        new THREE.Color(0xAAAAAA), // Light Gray
+        new THREE.Color(0x555555), // Dark Gray
+        new THREE.Color(0x5555FF), // Light Blue
+        new THREE.Color(0x55FF55), // Light Green
+        new THREE.Color(0x55FFFF), // Light Cyan
+        new THREE.Color(0xFF5555), // Light Red
+        new THREE.Color(0xFF55FF), // Light Magenta
+        new THREE.Color(0xFFFF55), // Yellow
+        new THREE.Color(0xFFFFFF), // White
       ];
 
     // Web safe palette plus grayscale
@@ -140,6 +141,7 @@ export const RetroShader: {
     colorCount: { value: 16 },
     colorTexture: { value: createColorTexture(createColorPalette(16)) },
     dithering: { value: true },
+    ditheringOffset: { value: 0.2 },
   },
 
   vertexShader: /* glsl */ `
@@ -151,61 +153,55 @@ export const RetroShader: {
   `,
 
   fragmentShader: /* glsl */ `
-uniform sampler2D tDiffuse;
-uniform vec2 resolution;
-uniform int colorCount;
-uniform sampler2D colorTexture;
-uniform bool dithering;
+    uniform sampler2D tDiffuse;
+    uniform vec2 resolution;
+    uniform int colorCount;
+    uniform sampler2D colorTexture;
+    uniform bool dithering;
+    uniform float ditheringOffset;
 
-varying vec2 vUv;
+    varying vec2 vUv;
 
-// Bayer matrix 4x4
-const float bayer4x4[16] = float[16](
-  0.0 / 16.0, 8.0 / 16.0, 2.0 / 16.0, 10.0 / 16.0,
-  12.0 / 16.0, 4.0 / 16.0, 14.0 / 16.0, 6.0 / 16.0,
-  3.0 / 16.0, 11.0 / 16.0, 1.0 / 16.0, 9.0 / 16.0,
-  15.0 / 16.0, 7.0 / 16.0, 13.0 / 16.0, 5.0 / 16.0
-);
+    // Bayer matrix 4x4
+    const float bayer4x4[16] = float[16](
+      0.0 / 16.0, 8.0 / 16.0, 2.0 / 16.0, 10.0 / 16.0,
+      12.0 / 16.0, 4.0 / 16.0, 14.0 / 16.0, 6.0 / 16.0,
+      3.0 / 16.0, 11.0 / 16.0, 1.0 / 16.0, 9.0 / 16.0,
+      15.0 / 16.0, 7.0 / 16.0, 13.0 / 16.0, 5.0 / 16.0
+    );
 
-void main() {
-  // Compute retro UV for pixelation
-  vec2 retroUV = (floor(vUv * resolution) + 0.5) / resolution;
-  vec3 c = texture2D(tDiffuse, retroUV).rgb;
+    void main() {
+      // Compute retro UV for pixelation
+      vec2 retroUV = (floor(vUv * resolution) + 0.5) / resolution;
+      vec3 c = texture2D(tDiffuse, retroUV).rgb;
 
-  // Compute retro pixel coordinates
-  vec2 retroCoord = floor(vUv * resolution);
+      // Compute retro pixel coordinates
+      vec2 retroCoord = floor(vUv * resolution);
 
-  if (dithering) {
-    // Compute luminance
-    float lum = dot(c, vec3(0.299, 0.587, 0.114));
-    // Apply dithering offset to luminance
-    int ix = int(mod(retroCoord.x, 4.0));
-    int iy = int(mod(retroCoord.y, 4.0));
-    float bayer = bayer4x4[iy * 4 + ix];
-    float offset = (bayer - 0.5) * 0.2; // Adjustable offset magnitude
-    float newLum = clamp(lum + offset, 0.0, 1.0);
-    if (lum > 0.0) {
-      c = c * (newLum / lum);
-    } else {
-      c = vec3(newLum);
+      if (dithering) {
+        // Apply dithering using Bayer matrix based on retro pixel position
+        int ix = int(mod(retroCoord.x, 4.0));
+        int iy = int(mod(retroCoord.y, 4.0));
+        float bayer = bayer4x4[iy * 4 + ix];
+        float offset = (bayer - 0.5) * ditheringOffset;
+        c += vec3(offset);
+        c = clamp(c, 0.0, 1.0);
+      }
+
+      // Find closest color in palette
+      vec3 closestColor = vec3(0.0);
+      float minDist = 1e6;
+      for (int i = 0; i < colorCount; i++) {
+        vec3 paletteColor = texture2D(colorTexture, vec2((float(i) + 0.5) / float(colorCount), 0.5)).rgb;
+        float dist = distance(c, paletteColor);
+        if (dist < minDist) {
+          minDist = dist;
+          closestColor = paletteColor;
+        }
+      }
+
+      gl_FragColor = vec4(closestColor, 1.0);
     }
-    c = clamp(c, 0.0, 1.0); // Ensure color stays within valid range
-  }
-
-  // Find closest color in palette
-  vec3 closestColor = vec3(0.0);
-  float minDist = 1e6;
-  for (int i = 0; i < colorCount; i++) {
-    vec3 paletteColor = texture2D(colorTexture, vec2((float(i) + 0.5) / float(colorCount), 0.5)).rgb;
-    float dist = distance(c, paletteColor);
-    if (dist < minDist) {
-      minDist = dist;
-      closestColor = paletteColor;
-    }
-  }
-
-  gl_FragColor = vec4(closestColor, 1.0);
-}
   `,
 };
 
@@ -219,6 +215,7 @@ export class RetroPass extends ShaderPass {
   public pixelRatio: number;
 
   #colorPalette!: THREE.Color[];
+  #autoDitheringOffset: boolean = false;
 
   /**
    * Creates a new RetroPass instance
@@ -288,6 +285,7 @@ export class RetroPass extends ShaderPass {
     this.uniforms.colorCount.value = colorCount;
     this.uniforms.colorTexture.value?.dispose();
     this.uniforms.colorTexture.value = colorTexture;
+    this.updateDitheringOffset();
 
     this.#colorPalette = colors.slice();
   }
@@ -303,13 +301,50 @@ export class RetroPass extends ShaderPass {
   }
 
   /**
-   * Set the pixel resolution to use (used by EffectComposer)
+   * The amount of dithering to apply, typically 0.0 to 1.0
+   */
+  public get ditheringOffset(): number {
+    return this.uniforms.ditheringOffset.value;
+  }
+  public set ditheringOffset(value: number) {
+    this.autoDitheringOffset = false;
+    this.uniforms.ditheringOffset.value = value;
+  }
+
+  /**
+   * Whether to automatically update the dithering offset based on the color count
+   */
+  public get autoDitheringOffset(): boolean {
+    return this.#autoDitheringOffset;
+  }
+  public set autoDitheringOffset(value: boolean) {
+    if (this.autoDitheringOffset !== value) {
+      this.#autoDitheringOffset = value;
+      this.updateDitheringOffset();
+    }
+  }
+
+  /**
+   * Set pixel resolution to use (used by EffectComposer)
    * @see {@link RetroPass.resolution}
    */
   public setSize(width: number, height: number): void {
     const { pixelRatio } = this;
     if (pixelRatio) {
       this.resolution.set(width * pixelRatio, height * pixelRatio);
+    }
+  }
+
+  /**
+   * Updates the dithering offset based on the current color count
+   */
+  protected updateDitheringOffset(): void {
+    if (!this.#autoDitheringOffset) return;
+    const colorCount = this.uniforms.colorCount.value;
+    if (colorCount > 1) {
+      this.uniforms.ditheringOffset.value = 1.0 / (colorCount - 1);
+    } else {
+      this.uniforms.ditheringOffset.value = 0.0;
     }
   }
 }

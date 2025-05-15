@@ -94,8 +94,7 @@ composer.addPass(renderPass);
 const retroParams: RetroPassParameters = {
   resolution: new THREE.Vector2(320, 200),
   colorCount: 16,
-  colorPalette: createColorPalette(16),
-  dithering: false,
+  dithering: true,
   pixelRatio: 0,
 };
 const retroPass = new RetroPass(retroParams);
@@ -114,18 +113,14 @@ retroFolder.add({ enabled: retroPass.enabled }, 'enabled').name('Enabled').onCha
 retroFolder.add({ colorCount: retroPass.colorCount }, 'colorCount', [2, 4, 16, 256]).name('Color Count').onChange((value: number) => {
   retroPass.colorCount = value;
 });
-retroFolder.add({ dithering: retroPass.dithering }, 'dithering').name('Dithering').onChange((value: boolean) => {
-  retroPass.dithering = value;
-});
+retroFolder.add(retroPass, 'dithering').name('Dithering');
 retroFolder.add({ resolutionX: retroPass.resolution.x }, 'resolutionX', 100, 1280, 10).name('Resolution X').onChange((value: number) => {
   retroPass.resolution = new THREE.Vector2(value, retroPass.resolution.y);
 });
 retroFolder.add({ resolutionY: retroPass.resolution.y }, 'resolutionY', 100, 720, 10).name('Resolution Y').onChange((value: number) => {
   retroPass.resolution = new THREE.Vector2(retroPass.resolution.x, value);
 });
-retroFolder.add({ pixelRatio: retroPass.pixelRatio }, 'pixelRatio', 0, 2, 0.1).name('Pixel Ratio').onChange((value: number) => {
-  retroPass.pixelRatio = value;
-});
+retroFolder.add(retroPass, 'pixelRatio', 0, 2, 0.1).name('Pixel Ratio');
 const palettes: { [key: string]: THREE.Color[] | null; } = {
   Default: null,
   Custom4: [
@@ -156,6 +151,10 @@ const palettes: { [key: string]: THREE.Color[] | null; } = {
 retroFolder.add({ colorPalette: 'Default' }, 'colorPalette', Object.keys(palettes)).name('Color Palette').onChange((value: string) => {
   retroPass.colorPalette = palettes[value] ?? createColorPalette(retroPass.colorCount);
 });
+retroFolder.add(retroPass, 'ditheringOffset', 0, 1, 0.1).name('Dithering Offset').onChange((value: number) => {
+  retroPass.ditheringOffset = value;
+});
+retroFolder.add(retroPass, 'autoDitheringOffset').name('Auto calc offset?');
 
 // Handle window resize
 window.addEventListener('resize', () => {
