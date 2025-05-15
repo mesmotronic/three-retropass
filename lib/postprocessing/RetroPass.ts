@@ -233,7 +233,7 @@ export class RetroPass extends ShaderPass {
 
     this.resolution = resolution ?? new THREE.Vector2(320, 200);
     this.pixelRatio = pixelRatio ?? 0;
-    this.dithering = dithering ?? false;
+    this.dithering = dithering ?? true;
 
     if (colorPalette) {
       this.colorPalette = colorPalette;
