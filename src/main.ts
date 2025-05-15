@@ -23,26 +23,34 @@ document.body.appendChild(renderer.domElement);
 
 // Define a curated palette of bright and medium-shade colors
 const sphereColors = [
-  new THREE.Color(1.0, 0.2, 0.2), // Bright Red
-  new THREE.Color(0.2, 1.0, 0.2), // Bright Green
-  new THREE.Color(0.2, 0.4, 1.0), // Bright Blue
-  new THREE.Color(1.0, 0.8, 0.2), // Yellow
-  new THREE.Color(0.8, 0.2, 0.8), // Purple
-  new THREE.Color(1.0, 0.5, 0.2), // Orange
-  new THREE.Color(0.2, 0.8, 0.8), // Cyan
-  new THREE.Color(0.8, 0.2, 0.6), // Magenta
-  new THREE.Color(0.6, 0.8, 0.2), // Lime
-  new THREE.Color(0.2, 0.6, 0.6), // Teal
+  new THREE.Color(1.0, 0.0, 0.0), // Red
+  new THREE.Color(1.0, 0.5, 0.0), // Orange
+  new THREE.Color(1.0, 1.0, 0.0), // Yellow
+  new THREE.Color(0.0, 1.0, 0.0), // Green
+  new THREE.Color(0.0, 0.0, 1.0), // Blue
+  new THREE.Color(0.3, 0.0, 0.5), // Indigo
+  new THREE.Color(0.5, 0.0, 1.0), // Violet
+  new THREE.Color(1.0, 0.0, 1.0), // Magenta
+  new THREE.Color(0.0, 1.0, 1.0), // Cyan
+  new THREE.Color(1.0, 1.0, 1.0), // White
+  new THREE.Color(0.5, 0.5, 0.0), // Olive
+  new THREE.Color(0.5, 0.0, 0.5), // Purple
+  new THREE.Color(0.0, 0.5, 0.5), // Teal
+  new THREE.Color(0.5, 0.5, 0.5), // Gray
+  new THREE.Color(0.7, 0.3, 0.3), // Medium Red
 ];
 
 // Create 10 spheres with highly metallic, shiny materials
 const spheres: THREE.Mesh[] = [];
 const geometry = new THREE.SphereGeometry(1, 32, 32);
-for (let i = 0; i < 10; i++) {
-  const material = new THREE.MeshStandardMaterial({
+for (let i = 0; i < sphereColors.length; i++) {
+  // const material = new THREE.MeshStandardMaterial({
+  //   color: sphereColors[i], // Assign color from palette
+  //   metalness: 0.9, // Nearly fully metallic for bright, reflective look
+  //   roughness: 0.05, // Very low roughness for mirror-like shininess
+  // });
+  const material = new THREE.MeshBasicMaterial({
     color: sphereColors[i], // Assign color from palette
-    metalness: 0.9, // Nearly fully metallic for bright, reflective look
-    roughness: 0.05, // Very low roughness for mirror-like shininess
   });
   const sphere = new THREE.Mesh(geometry, material);
   sphere.position.set(
@@ -54,15 +62,17 @@ for (let i = 0; i < 10; i++) {
   spheres.push(sphere);
 }
 
-// Add lighting
-const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.3); // Brighter ambient for base illumination
+const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.4); // Brighter ambient for base illumination
 scene.add(ambientLight);
+
 const directionalLight1 = new THREE.DirectionalLight(0xffffff, 3.0); // Strong primary light
 directionalLight1.position.set(5, 5, 10); // Adjusted for broader coverage
 scene.add(directionalLight1);
+
 const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.5); // Stronger secondary light
 directionalLight2.position.set(-5, -5, 10); // Adjusted for broader coverage
 scene.add(directionalLight2);
+
 const pointLight = new THREE.PointLight(0xffffff, 0.5, 20); // Dynamic highlights
 pointLight.position.set(0, 0, 8);
 scene.add(pointLight);
