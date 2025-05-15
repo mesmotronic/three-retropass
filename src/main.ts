@@ -55,12 +55,12 @@ for (let i = 0; i < 10; i++) {
 }
 
 // Add lighting
-const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.6); // Brighter ambient for base illumination
+const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.3); // Brighter ambient for base illumination
 scene.add(ambientLight);
-const directionalLight1 = new THREE.DirectionalLight(0xffffff, 2.0); // Strong primary light
+const directionalLight1 = new THREE.DirectionalLight(0xffffff, 3.0); // Strong primary light
 directionalLight1.position.set(5, 5, 10); // Adjusted for broader coverage
 scene.add(directionalLight1);
-const directionalLight2 = new THREE.DirectionalLight(0xffffff, 1.7); // Stronger secondary light
+const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.5); // Stronger secondary light
 directionalLight2.position.set(-5, -5, 10); // Adjusted for broader coverage
 scene.add(directionalLight2);
 const pointLight = new THREE.PointLight(0xffffff, 0.5, 20); // Dynamic highlights
@@ -82,7 +82,7 @@ const retroParams: RetroPassParameters = {
   resolution: new THREE.Vector2(320, 200),
   colorCount: 16,
   colorPalette: createColorPalette(16),
-  dithering: true,
+  dithering: false,
   pixelRatio: 0,
 };
 const retroPass = new RetroPass(retroParams);
