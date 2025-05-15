@@ -151,7 +151,7 @@ const palettes: { [key: string]: THREE.Color[] | null; } = {
 retroFolder.add({ colorPalette: 'Default' }, 'colorPalette', Object.keys(palettes)).name('Color Palette').onChange((value: string) => {
   retroPass.colorPalette = palettes[value] ?? createColorPalette(retroPass.colorCount);
 });
-retroFolder.add(retroPass, 'ditheringOffset', 0, 1, 0.1).name('Dithering Offset').onChange((value: number) => {
+retroFolder.add(retroPass, 'ditheringOffset', 0, 1, 0.05).name('Dithering Offset').onChange((value: number) => {
   retroPass.ditheringOffset = value;
 });
 retroFolder.add(retroPass, 'autoDitheringOffset').name('Auto calc offset?');

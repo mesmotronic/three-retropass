@@ -179,11 +179,14 @@ export const RetroShader: {
       vec2 retroCoord = floor(vUv * resolution);
 
       if (dithering) {
-        // Apply dithering using Bayer matrix based on retro pixel position
-        int ix = int(mod(retroCoord.x, 4.0));
-        int iy = int(mod(retroCoord.y, 4.0));
-        float bayer = bayer4x4[iy * 4 + ix];
-        float offset = (bayer - 0.5) * ditheringOffset;
+        float offset = 0.0;
+        // Skip dithering for pure black pixels
+        if (!(c.r == 0.0 && c.g == 0.0 && c.b == 0.0)) {
+          int ix = int(mod(retroCoord.x, 4.0));
+          int iy = int(mod(retroCoord.y, 4.0));
+          float bayer = bayer4x4[iy * 4 + ix];
+          offset = (bayer - 0.5) * ditheringOffset;
+        }
         c += vec3(offset);
         c = clamp(c, 0.0, 1.0);
       }
@@ -285,7 +288,9 @@ export class RetroPass extends ShaderPass {
     this.uniforms.colorCount.value = colorCount;
     this.uniforms.colorTexture.value?.dispose();
     this.uniforms.colorTexture.value = colorTexture;
-    this.updateDitheringOffset();
+    if (this.#autoDitheringOffset) {
+      this.updateDitheringOffset();
+    }
 
     this.#colorPalette = colors.slice();
   }
@@ -307,7 +312,6 @@ export class RetroPass extends ShaderPass {
     return this.uniforms.ditheringOffset.value;
   }
   public set ditheringOffset(value: number) {
-    this.autoDitheringOffset = false;
     this.uniforms.ditheringOffset.value = value;
   }
 
@@ -318,20 +322,11 @@ export class RetroPass extends ShaderPass {
     return this.#autoDitheringOffset;
   }
   public set autoDitheringOffset(value: boolean) {
-    if (this.autoDitheringOffset !== value) {
+    if (this.#autoDitheringOffset !== value) {
       this.#autoDitheringOffset = value;
-      this.updateDitheringOffset();
-    }
-  }
-
-  /**
-   * Set pixel resolution to use (used by EffectComposer)
-   * @see {@link RetroPass.resolution}
-   */
-  public setSize(width: number, height: number): void {
-    const { pixelRatio } = this;
-    if (pixelRatio) {
-      this.resolution.set(width * pixelRatio, height * pixelRatio);
+      if (value) {
+        this.updateDitheringOffset();
+      }
     }
   }
 
@@ -339,12 +334,24 @@ export class RetroPass extends ShaderPass {
    * Updates the dithering offset based on the current color count
    */
   protected updateDitheringOffset(): void {
-    if (!this.#autoDitheringOffset) return;
-    const colorCount = this.uniforms.colorCount.value;
-    if (colorCount > 1) {
-      this.uniforms.ditheringOffset.value = 1.0 / (colorCount - 1);
-    } else {
-      this.uniforms.ditheringOffset.value = 0.0;
+    if (this.#autoDitheringOffset) {
+      const colorCount = this.uniforms.colorCount.value;
+      if (colorCount > 1) {
+        this.uniforms.ditheringOffset.value = 1.0 / (colorCount - 1);
+      } else {
+        this.uniforms.ditheringOffset.value = 0.0;
+      }
+    }
+  }
+
+  /**
+   * Set the pixel resolution to use (used by EffectComposer)
+   * @see {@link RetroPass.resolution}
+   */
+  public setSize(width: number, height: number): void {
+    const { pixelRatio } = this;
+    if (pixelRatio) {
+      this.resolution.set(width * pixelRatio, height * pixelRatio);
     }
   }
 }
