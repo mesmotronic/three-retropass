@@ -151,54 +151,61 @@ export const RetroShader: {
   `,
 
   fragmentShader: /* glsl */ `
-    uniform sampler2D tDiffuse;
-    uniform vec2 resolution;
-    uniform int colorCount;
-    uniform sampler2D colorTexture;
-    uniform bool dithering;
+uniform sampler2D tDiffuse;
+uniform vec2 resolution;
+uniform int colorCount;
+uniform sampler2D colorTexture;
+uniform bool dithering;
 
-    varying vec2 vUv;
+varying vec2 vUv;
 
-    // Bayer matrix 4x4
-    const float bayer4x4[16] = float[16](
-      0.0 / 16.0, 8.0 / 16.0, 2.0 / 16.0, 10.0 / 16.0,
-      12.0 / 16.0, 4.0 / 16.0, 14.0 / 16.0, 6.0 / 16.0,
-      3.0 / 16.0, 11.0 / 16.0, 1.0 / 16.0, 9.0 / 16.0,
-      15.0 / 16.0, 7.0 / 16.0, 13.0 / 16.0, 5.0 / 16.0
-    );
+// Bayer matrix 4x4
+const float bayer4x4[16] = float[16](
+  0.0 / 16.0, 8.0 / 16.0, 2.0 / 16.0, 10.0 / 16.0,
+  12.0 / 16.0, 4.0 / 16.0, 14.0 / 16.0, 6.0 / 16.0,
+  3.0 / 16.0, 11.0 / 16.0, 1.0 / 16.0, 9.0 / 16.0,
+  15.0 / 16.0, 7.0 / 16.0, 13.0 / 16.0, 5.0 / 16.0
+);
 
-    void main() {
-      // Compute retro UV for pixelation
-      vec2 retroUV = (floor(vUv * resolution) + 0.5) / resolution;
-      vec3 c = texture2D(tDiffuse, retroUV).rgb;
+void main() {
+  // Compute retro UV for pixelation
+  vec2 retroUV = (floor(vUv * resolution) + 0.5) / resolution;
+  vec3 c = texture2D(tDiffuse, retroUV).rgb;
 
-      // Compute retro pixel coordinates
-      vec2 retroCoord = floor(vUv * resolution);
+  // Compute retro pixel coordinates
+  vec2 retroCoord = floor(vUv * resolution);
 
-      if (dithering) {
-        // Apply dithering using Bayer matrix based on retro pixel position
-        int ix = int(mod(retroCoord.x, 4.0));
-        int iy = int(mod(retroCoord.y, 4.0));
-        float bayer = bayer4x4[iy * 4 + ix];
-        float offset = (bayer - 0.5) * (2.0 / 255.0);
-        c += vec3(offset);
-        c = clamp(c, 0.0, 1.0);
-      }
-
-      // Find closest color in palette
-      vec3 closestColor = vec3(0.0);
-      float minDist = 1e6;
-      for (int i = 0; i < colorCount; i++) {
-        vec3 paletteColor = texture2D(colorTexture, vec2((float(i) + 0.5) / float(colorCount), 0.5)).rgb;
-        float dist = distance(c, paletteColor);
-        if (dist < minDist) {
-          minDist = dist;
-          closestColor = paletteColor;
-        }
-      }
-
-      gl_FragColor = vec4(closestColor, 1.0);
+  if (dithering) {
+    // Compute luminance
+    float lum = dot(c, vec3(0.299, 0.587, 0.114));
+    // Apply dithering offset to luminance
+    int ix = int(mod(retroCoord.x, 4.0));
+    int iy = int(mod(retroCoord.y, 4.0));
+    float bayer = bayer4x4[iy * 4 + ix];
+    float offset = (bayer - 0.5) * 0.2; // Adjustable offset magnitude
+    float newLum = clamp(lum + offset, 0.0, 1.0);
+    if (lum > 0.0) {
+      c = c * (newLum / lum);
+    } else {
+      c = vec3(newLum);
     }
+    c = clamp(c, 0.0, 1.0); // Ensure color stays within valid range
+  }
+
+  // Find closest color in palette
+  vec3 closestColor = vec3(0.0);
+  float minDist = 1e6;
+  for (int i = 0; i < colorCount; i++) {
+    vec3 paletteColor = texture2D(colorTexture, vec2((float(i) + 0.5) / float(colorCount), 0.5)).rgb;
+    float dist = distance(c, paletteColor);
+    if (dist < minDist) {
+      minDist = dist;
+      closestColor = paletteColor;
+    }
+  }
+
+  gl_FragColor = vec4(closestColor, 1.0);
+}
   `,
 };
 

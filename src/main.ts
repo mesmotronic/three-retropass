@@ -49,7 +49,10 @@ for (let i = 0; i < sphereColors.length; i++) {
   //   metalness: 0.9, // Nearly fully metallic for bright, reflective look
   //   roughness: 0.05, // Very low roughness for mirror-like shininess
   // });
-  const material = new THREE.MeshBasicMaterial({
+  // const material = new THREE.MeshBasicMaterial({
+  //   color: sphereColors[i], // Assign color from palette
+  // });
+  const material = new THREE.MeshPhongMaterial({
     color: sphereColors[i], // Assign color from palette
   });
   const sphere = new THREE.Mesh(geometry, material);
