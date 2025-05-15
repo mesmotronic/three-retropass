@@ -212,13 +212,11 @@ export const RetroShader: {
  * Post-processing pass for applying a retro-style effect with color quantization and dithering
  */
 export class RetroPass extends ShaderPass {
-  /**
-   * Pixel ratio to use, typically 0.0-1.0, overrides resolution if set (optional)
-   */
-  public pixelRatio: number;
+  protected size = new THREE.Vector2();
 
-  #colorPalette!: THREE.Color[];
   #autoDitheringOffset: boolean = false;
+  #colorPalette!: THREE.Color[];
+  #pixelRatio: number = 0;
 
   /**
    * Creates a new RetroPass instance
@@ -331,6 +329,36 @@ export class RetroPass extends ShaderPass {
   }
 
   /**
+   * Pixel ratio to use, typically 0.0-1.0, overrides resolution if set (optional)
+   */
+  get pixelRatio(): number {
+    return this.#pixelRatio;
+  }
+  set pixelRatio(value: number) {
+    if (this.#pixelRatio !== value) {
+      this.#pixelRatio = value;
+      this.updateResolution();
+    }
+  }
+
+  /**
+   * Set the pixel resolution to use (used by EffectComposer)
+   * @see {@link RetroPass.resolution}
+   */
+  public setSize(width: number, height: number): void {
+    if (this.pixelRatio) {
+      this.updateResolution();
+    }
+    this.size.set(width, height);
+  }
+
+  protected updateResolution(): void {
+    if (this.pixelRatio) {
+      this.resolution.set(this.size.x * this.#pixelRatio, this.size.y * this.#pixelRatio);
+    }
+  }
+
+  /**
    * Updates the dithering offset based on the current color count
    */
   protected updateDitheringOffset(): void {
@@ -341,17 +369,6 @@ export class RetroPass extends ShaderPass {
       } else {
         this.uniforms.ditheringOffset.value = 0.0;
       }
-    }
-  }
-
-  /**
-   * Set the pixel resolution to use (used by EffectComposer)
-   * @see {@link RetroPass.resolution}
-   */
-  public setSize(width: number, height: number): void {
-    const { pixelRatio } = this;
-    if (pixelRatio) {
-      this.resolution.set(width * pixelRatio, height * pixelRatio);
     }
   }
 }

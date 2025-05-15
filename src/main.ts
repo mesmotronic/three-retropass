@@ -114,38 +114,40 @@ retroFolder.add({ colorCount: retroPass.colorCount }, 'colorCount', [2, 4, 16, 2
   retroPass.colorCount = value;
 });
 retroFolder.add(retroPass, 'dithering').name('Dithering');
-retroFolder.add({ resolutionX: retroPass.resolution.x }, 'resolutionX', 100, 1280, 10).name('Resolution X').onChange((value: number) => {
+retroFolder.add({ resolutionX: retroPass.resolution.x }, 'resolutionX', 64, 1280, 10).name('Resolution X').onChange((value: number) => {
   retroPass.resolution = new THREE.Vector2(value, retroPass.resolution.y);
 });
-retroFolder.add({ resolutionY: retroPass.resolution.y }, 'resolutionY', 100, 720, 10).name('Resolution Y').onChange((value: number) => {
+retroFolder.add({ resolutionY: retroPass.resolution.y }, 'resolutionY', 64, 720, 10).name('Resolution Y').onChange((value: number) => {
   retroPass.resolution = new THREE.Vector2(retroPass.resolution.x, value);
 });
-retroFolder.add(retroPass, 'pixelRatio', 0, 2, 0.1).name('Pixel Ratio');
+retroFolder.add(retroPass, 'pixelRatio', 0, window.devicePixelRatio, 0.1).name('Pixel Ratio');
 const palettes: { [key: string]: THREE.Color[] | null; } = {
   Default: null,
+  // Atari ST med res palette
   Custom4: [
     new THREE.Color(0.0, 0.0, 0.0), // Black
-    new THREE.Color(0.0, 1.0, 1.0), // Cyan
+    new THREE.Color(1.0, 1.0, 1.0), // White
     new THREE.Color(1.0, 0.0, 0.0), // Red
     new THREE.Color(0.0, 1.0, 0.0), // Green
   ],
+  // Atari ST low res palette
   Custom16: [
-    new THREE.Color(0.0, 0.0, 0.0),
-    new THREE.Color(0.1, 0.1, 0.1),
-    new THREE.Color(0.2, 0.2, 0.2),
-    new THREE.Color(0.3, 0.3, 0.3),
-    new THREE.Color(0.4, 0.4, 0.4),
-    new THREE.Color(0.5, 0.5, 0.5),
-    new THREE.Color(0.6, 0.6, 0.6),
-    new THREE.Color(0.7, 0.7, 0.7),
-    new THREE.Color(0.8, 0.8, 0.8),
-    new THREE.Color(0.9, 0.9, 0.9),
-    new THREE.Color(1.0, 0.0, 0.0),
-    new THREE.Color(0.0, 1.0, 0.0),
-    new THREE.Color(0.0, 0.0, 1.0),
-    new THREE.Color(1.0, 1.0, 0.0),
-    new THREE.Color(1.0, 0.0, 1.0),
-    new THREE.Color(0.0, 1.0, 1.0),
+    new THREE.Color(0.0, 0.0, 0.0), // Black
+    new THREE.Color(0.333, 0.333, 0.333), // Dark Gray
+    new THREE.Color(0.666, 0.666, 0.666), // Light Gray
+    new THREE.Color(1.0, 1.0, 1.0), // White
+    new THREE.Color(1.0, 0.0, 0.0), // Red
+    new THREE.Color(0.0, 1.0, 0.0), // Green
+    new THREE.Color(0.0, 0.0, 1.0), // Blue
+    new THREE.Color(1.0, 1.0, 0.0), // Yellow
+    new THREE.Color(1.0, 0.0, 1.0), // Magenta
+    new THREE.Color(0.0, 1.0, 1.0), // Cyan
+    new THREE.Color(0.666, 0.333, 0.0), // Brown
+    new THREE.Color(0.333, 0.666, 0.0), // Light Green
+    new THREE.Color(0.0, 0.333, 0.666), // Light Blue
+    new THREE.Color(0.666, 0.0, 0.333), // Pink
+    new THREE.Color(0.333, 0.0, 0.666), // Purple
+    new THREE.Color(0.0, 0.666, 0.333), // Teal
   ],
 };
 retroFolder.add({ colorPalette: 'Default' }, 'colorPalette', Object.keys(palettes)).name('Color Palette').onChange((value: string) => {
@@ -154,7 +156,7 @@ retroFolder.add({ colorPalette: 'Default' }, 'colorPalette', Object.keys(palette
 retroFolder.add(retroPass, 'ditheringOffset', 0, 1, 0.05).name('Dithering Offset').onChange((value: number) => {
   retroPass.ditheringOffset = value;
 });
-retroFolder.add(retroPass, 'autoDitheringOffset').name('Auto calc offset?');
+retroFolder.add(retroPass, 'autoDitheringOffset').name('Auto Offset?');
 
 // Handle window resize
 window.addEventListener('resize', () => {
