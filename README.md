@@ -63,7 +63,7 @@ Example screenshots using default palettes with [Littlest Tokyo](https://artstat
 Original
 
 ![Screenshot 2025-05-16 at 23 16 33](https://github.com/user-attachments/assets/e2897897-ee3c-4a8f-802c-7d185e0ab70d)
-320x200 2 colours (Monochrome)
+320x200 2 colours (monochrome)
 
 ![Screenshot 2025-05-16 at 22 51 52](https://github.com/user-attachments/assets/a3f68162-2e72-4b10-a2c1-b35e24f62489)
 320x200 4 colours (CGA mode 1)
