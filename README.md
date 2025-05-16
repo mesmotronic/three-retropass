@@ -56,17 +56,20 @@ animate();
 
 ## Screenshots
 
-Example screenshots using default settings and palettes with [Littlest Tokyo](https://artstation.com/artwork/1AGwX) by
+Example screenshots using default palettes with [Littlest Tokyo](https://artstation.com/artwork/1AGwX) by
 [Glen Fox](https://artstation.com/glenatron), CC Attribution.
 
 ![Screenshot 2025-05-16 at 22 51 38](https://github.com/user-attachments/assets/a5eb9b18-8802-4a25-96fc-449dbedf170e)
 Original
 
+![Screenshot 2025-05-16 at 23 16 33](https://github.com/user-attachments/assets/e2897897-ee3c-4a8f-802c-7d185e0ab70d)
+320x200 2 colours (Monochrome)
+
 ![Screenshot 2025-05-16 at 22 51 52](https://github.com/user-attachments/assets/a3f68162-2e72-4b10-a2c1-b35e24f62489)
 320x200 4 colours (CGA mode 1)
 
 ![Screenshot 2025-05-16 at 22 52 02](https://github.com/user-attachments/assets/bab38ec2-fe22-453b-ac3e-81f818b7bb73)
-320x200 16 colours (MS VGA palette)
+320x200 16 colours (MS VGA)
 
 ![Screenshot 2025-05-16 at 22 52 14](https://github.com/user-attachments/assets/980d0cee-39a0-43e5-b816-937412b8e4d9)
-320x200 256 colours (web safe palette)
+320x200 256 colours (web safe)
