@@ -18,6 +18,8 @@ export interface RetroPassParameters {
   colorPalette?: THREE.Color[];
   dithering?: boolean;
   pixelRatio?: number;
+  ditheringOffset?: number;
+  autoDitheringOffset?: boolean;
 }
 
 /**
@@ -223,22 +225,26 @@ export class RetroPass extends ShaderPass {
    * @param parameters - Configuration parameters for the retro effect
    */
   constructor({
-    resolution,
-    colorCount,
+    colorCount = 16,
     colorPalette,
-    dithering,
-    pixelRatio,
+    dithering = true,
+    ditheringOffset = 0.2,
+    autoDitheringOffset = false,
+    pixelRatio = 0,
+    resolution = new THREE.Vector2(320, 200),
   }: RetroPassParameters = {}) {
     super(RetroShader);
 
-    this.resolution = resolution ?? new THREE.Vector2(320, 200);
-    this.pixelRatio = pixelRatio ?? 0;
-    this.dithering = dithering ?? true;
+    this.dithering = dithering;
+    this.ditheringOffset = ditheringOffset;
+    this.autoDitheringOffset = autoDitheringOffset;
+    this.pixelRatio = pixelRatio;
+    this.resolution = resolution;
 
     if (colorPalette) {
       this.colorPalette = colorPalette;
     } else {
-      this.colorCount = colorCount ?? 16;
+      this.colorCount = colorCount;
     }
   }
 
@@ -346,10 +352,10 @@ export class RetroPass extends ShaderPass {
    * @see {@link RetroPass.resolution}
    */
   public setSize(width: number, height: number): void {
+    this.size.set(width, height);
     if (this.pixelRatio) {
       this.updateResolution();
     }
-    this.size.set(width, height);
   }
 
   protected updateResolution(): void {

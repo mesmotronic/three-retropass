@@ -3,7 +3,7 @@
   "author": "Neil Rackett",
   "license": "BSD-3-Clause",
   "description": "RetroPass applies a retro aesthetic to your Three.js project, emulating the visual style of classic 8-bit and 16-bit games",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
@@ -32,7 +32,8 @@
     "build": "tsc -b ./tsconfig.lib.json && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build",
+    "watch": "vite build --watch"
   },
   "peerDependencies": {
     "three": ">=0.128.0"
