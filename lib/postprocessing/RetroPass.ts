@@ -228,7 +228,7 @@ export class RetroPass extends ShaderPass {
     colorPalette,
     dithering,
     pixelRatio,
-  }: RetroPassParameters) {
+  }: RetroPassParameters = {}) {
     super(RetroShader);
 
     this.resolution = resolution ?? new THREE.Vector2(320, 200);
