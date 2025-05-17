@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { IUniform } from 'three';
 
 const validColorCounts = [2, 4, 16, 256];
