@@ -369,7 +369,7 @@ export class RetroPass extends ShaderPass {
    */
   protected updateDitheringOffset(): void {
     if (this.autoDitheringOffset) {
-      this.ditheringOffset.value = 1.0 / (colorCount - 1);
+      this.ditheringOffset = 1.0 / (colorCount - 1);
     }
   }
 }
