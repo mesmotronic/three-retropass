@@ -1,6 +1,6 @@
 # RetroPass for Three.js
 
-RetroPass is a WebGL post-processing effect for Three.js that simulates the look of retro graphics, applying pixelation and colour quantisation for a nostalgic, low-resolution aesthetic — ideal for games or apps evoking classic video game vibes.
+Inspired by [STDOOM](https://github.com/indyjo/STDOOM), RetroPass is a WebGL post-processing effect for Three.js that enables you to give your project a retro look and feel, with pixelation and colour quantisation for a nostalgic, low-res aesthetic — ideal for games or apps evoking classic video game vibes.
 
 ## Installation
 
