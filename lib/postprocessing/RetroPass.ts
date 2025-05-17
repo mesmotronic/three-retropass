@@ -360,7 +360,7 @@ export class RetroPass extends ShaderPass {
 
   protected updateResolution(): void {
     if (this.pixelRatio) {
-      this.resolution.set(this.size.x * this.#pixelRatio, this.size.y * this.#pixelRatio);
+      this.resolution.set(this.size.x * this.pixelRatio, this.size.y * this.pixelRatio);
     }
   }
 
@@ -368,13 +368,8 @@ export class RetroPass extends ShaderPass {
    * Updates the dithering offset based on the current color count
    */
   protected updateDitheringOffset(): void {
-    if (this.#autoDitheringOffset) {
-      const colorCount = this.uniforms.colorCount.value;
-      if (colorCount > 1) {
-        this.uniforms.ditheringOffset.value = 1.0 / (colorCount - 1);
-      } else {
-        this.uniforms.ditheringOffset.value = 0.0;
-      }
+    if (this.autoDitheringOffset) {
+      this.ditheringOffset.value = 1.0 / (colorCount - 1);
     }
   }
 }
