@@ -16,8 +16,8 @@ Here’s an example of how to use RetroPass in your Three.js project, showing a 
 
 ```javascript
 import * as THREE from 'three';
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { RetroPass } from '@mesmotronic/three-retropass';
 
 // Scene setup
