@@ -120,6 +120,7 @@ retroFolder.add({ resolutionX: retroPass.resolution.x }, 'resolutionX', 64, 1280
 retroFolder.add({ resolutionY: retroPass.resolution.y }, 'resolutionY', 64, 720, 10).name('Resolution Y').onChange((value: number) => {
   retroPass.resolution = new THREE.Vector2(retroPass.resolution.x, value);
 });
+retroFolder.add(retroPass, 'autoResolution').name('Auto Resolution?');
 retroFolder.add(retroPass, 'pixelRatio', 0, window.devicePixelRatio, 0.1).name('Pixel Ratio');
 const palettes: { [key: string]: THREE.Color[] | null; } = {
   Default: null,

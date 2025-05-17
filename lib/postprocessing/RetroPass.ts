@@ -14,6 +14,7 @@ export type ColorCount = typeof validColorCounts[number];
  */
 export interface RetroPassParameters {
   resolution?: THREE.Vector2;
+  autoResolution?: boolean;
   colorCount?: ColorCount;
   colorPalette?: THREE.Color[];
   dithering?: boolean;
@@ -216,8 +217,9 @@ export const RetroShader: {
 export class RetroPass extends ShaderPass {
   protected size = new THREE.Vector2();
 
-  #autoDitheringOffset: boolean = false;
   #colorPalette!: THREE.Color[];
+  #autoDitheringOffset: boolean = false;
+  #autoResolution: boolean = false;
   #pixelRatio: number = 0;
 
   /**
@@ -230,8 +232,9 @@ export class RetroPass extends ShaderPass {
     dithering = true,
     ditheringOffset = 0.2,
     autoDitheringOffset = false,
-    pixelRatio = 0,
+    pixelRatio = 0.25,
     resolution = new THREE.Vector2(320, 200),
+    autoResolution = false,
   }: RetroPassParameters = {}) {
     super(RetroShader);
 
@@ -239,7 +242,9 @@ export class RetroPass extends ShaderPass {
     this.ditheringOffset = ditheringOffset;
     this.autoDitheringOffset = autoDitheringOffset;
     this.pixelRatio = pixelRatio;
+
     this.resolution = resolution;
+    this.autoResolution = autoResolution;
 
     if (colorPalette) {
       this.colorPalette = colorPalette;
@@ -257,6 +262,32 @@ export class RetroPass extends ShaderPass {
   public set resolution(value: THREE.Vector2) {
     if (!value.equals(this.uniforms.resolution.value)) {
       this.uniforms.resolution.value.copy(value);
+    }
+  }
+
+  /**
+   * Whether to automatically update the resolution based on the specified pixelRatio
+   */
+  public get autoResolution(): boolean {
+    return this.#autoResolution;
+  }
+  public set autoResolution(value: boolean) {
+    if (this.#autoResolution !== value) {
+      this.#autoResolution = value;
+      this.updateResolution();
+    }
+  }
+
+  /**
+   * Pixel ratio to use if autoResolution is true, typically 0.0-1.0 (optional)
+   */
+  get pixelRatio(): number {
+    return this.#pixelRatio;
+  }
+  set pixelRatio(value: number) {
+    if (this.#pixelRatio !== value) {
+      this.#pixelRatio = value;
+      this.updateResolution();
     }
   }
 
@@ -335,31 +366,16 @@ export class RetroPass extends ShaderPass {
   }
 
   /**
-   * Pixel ratio to use, typically 0.0-1.0, overrides resolution if set (optional)
-   */
-  get pixelRatio(): number {
-    return this.#pixelRatio;
-  }
-  set pixelRatio(value: number) {
-    if (this.#pixelRatio !== value) {
-      this.#pixelRatio = value;
-      this.updateResolution();
-    }
-  }
-
-  /**
    * Set the pixel resolution to use (used by EffectComposer)
    * @see {@link RetroPass.resolution}
    */
   public setSize(width: number, height: number): void {
     this.size.set(width, height);
-    if (this.pixelRatio) {
-      this.updateResolution();
-    }
+    this.updateResolution();
   }
 
   protected updateResolution(): void {
-    if (this.pixelRatio) {
+    if (this.autoResolution) {
       this.resolution.set(this.size.x * this.pixelRatio, this.size.y * this.pixelRatio);
     }
   }
