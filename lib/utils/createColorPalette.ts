@@ -8,8 +8,8 @@ export function createColorPalette(colorCount: ColorCount): THREE.Color[] {
   let colorPalette: THREE.Color[] = [];
 
   switch (true) {
-    // Web safe palette plus grayscale
-    case colorCount > 16 && colorCount <= 256: {
+    // 256 colours - Web safe palette plus grayscale
+    case colorCount > 16: {
       const palette: THREE.Color[] = [];
       const steps = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0];
       for (let r of steps) {
@@ -26,8 +26,9 @@ export function createColorPalette(colorCount: ColorCount): THREE.Color[] {
       colorPalette = palette.slice(0, 256);
       break;
     }
-    // Microsoft Windows Standard VGA 16 Color Palette
-    case colorCount >= 16: {
+
+    // 16 colours - Microsoft Windows Standard VGA Palette
+    case colorCount > 4: {
       colorPalette = [
         new THREE.Color(0x000000), // Black
         new THREE.Color(0x0000AA), // Blue
@@ -48,8 +49,9 @@ export function createColorPalette(colorCount: ColorCount): THREE.Color[] {
       ];
       break;
     }
-    // CGA mode 1
-    case colorCount >= 4: {
+
+    // 4 colours - CGA mode 1
+    case colorCount > 2: {
       colorPalette = [
         new THREE.Color(0x000000), // Black
         new THREE.Color(0x00AAAA), // Cyan
@@ -58,16 +60,18 @@ export function createColorPalette(colorCount: ColorCount): THREE.Color[] {
       ];
       break;
     }
-    // Monochrome
-    case colorCount >= 2: {
+
+    // 2 colours - Monochrome
+    case colorCount >= 0: {
       colorPalette = [
         new THREE.Color(0x000000), // Black
         new THREE.Color(0xFFFFFF), // White
       ];
       break;
     }
+
     default: {
-      throw new Error(`Invalid colorCount: ${colorCount} is not between 2 and 256`);
+      throw new Error(`Invalid colorCount: ${colorCount}`);
     }
   }
 
