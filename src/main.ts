@@ -4,7 +4,7 @@ import Stats from 'three/addons/libs/stats.module.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
-import { createColorPalette, RetroPass, RetroPassParameters } from '../lib/postprocessing/RetroPass';
+import { createColorPalette, RetroPass, RetroPassParameters } from '../lib/main';
 import './main.css';
 
 // Scene setup
@@ -40,20 +40,11 @@ const sphereColors = [
   new THREE.Color(0.7, 0.3, 0.3), // Medium Red
 ];
 
-// Create 10 spheres with highly metallic, shiny materials
 const spheres: THREE.Mesh[] = [];
 const geometry = new THREE.SphereGeometry(1, 32, 32);
 for (let i = 0; i < sphereColors.length; i++) {
-  // const material = new THREE.MeshStandardMaterial({
-  //   color: sphereColors[i], // Assign color from palette
-  //   metalness: 0.9, // Nearly fully metallic for bright, reflective look
-  //   roughness: 0.05, // Very low roughness for mirror-like shininess
-  // });
-  // const material = new THREE.MeshBasicMaterial({
-  //   color: sphereColors[i], // Assign color from palette
-  // });
   const material = new THREE.MeshPhongMaterial({
-    color: sphereColors[i], // Assign color from palette
+    color: sphereColors[i],
   });
   const sphere = new THREE.Mesh(geometry, material);
   sphere.position.set(
@@ -120,6 +111,7 @@ retroFolder.add({ resolutionX: retroPass.resolution.x }, 'resolutionX', 64, 1280
 retroFolder.add({ resolutionY: retroPass.resolution.y }, 'resolutionY', 64, 720, 10).name('Resolution Y').onChange((value: number) => {
   retroPass.resolution = new THREE.Vector2(retroPass.resolution.x, value);
 });
+retroFolder.add(retroPass, 'autoResolution').name('Auto Resolution?');
 retroFolder.add(retroPass, 'pixelRatio', 0, window.devicePixelRatio, 0.1).name('Pixel Ratio');
 const palettes: { [key: string]: THREE.Color[] | null; } = {
   Default: null,
