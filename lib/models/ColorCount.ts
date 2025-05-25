@@ -1,7 +1,6 @@
-export const validColorCounts = Array.from({ length: 255 }).map((_, i) => i + 2);
+import { validColorCounts } from "../utils/isValidColorCount";
 
 /**
  * Valid color count values for the RetroPass effect
  */
 export type ColorCount = (typeof validColorCounts)[number];
-

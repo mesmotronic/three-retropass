@@ -8,6 +8,34 @@ export function createColorPalette(colorCount: ColorCount): THREE.Color[] {
   let colorPalette: THREE.Color[] = [];
 
   switch (true) {
+    // 4096 colours - Full Atari STE / Amiga color palette
+    case colorCount > 512: {
+      const palette: THREE.Color[] = [];
+      for (let r = 0; r < 16; r++) {
+        for (let g = 0; g < 16; g++) {
+          for (let b = 0; b < 16; b++) {
+            palette.push(new THREE.Color(r / 15, g / 15, b / 15));
+          }
+        }
+      }
+      colorPalette = palette;
+      break;
+    }
+
+    // 512 colours - Full Atari ST (before E) color palette
+    case colorCount > 256: {
+      const palette: THREE.Color[] = [];
+      for (let r = 0; r < 8; r++) {
+        for (let g = 0; g < 8; g++) {
+          for (let b = 0; b < 8; b++) {
+            palette.push(new THREE.Color(r / 7, g / 7, b / 7));
+          }
+        }
+      }
+      colorPalette = palette;
+      break;
+    }
+
     // 256 colours - Web safe palette plus grayscale
     case colorCount > 16: {
       const palette: THREE.Color[] = [];
