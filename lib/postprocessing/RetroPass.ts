@@ -1,10 +1,17 @@
 import * as THREE from 'three';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+<<<<<<< HEAD
+=======
+import { validColorCounts } from "../models/ColorCount";
+>>>>>>> main
 import { RetroPassParameters } from '../models/RetroPassParameters';
 import { RetroShader } from '../shaders/RetroShader';
 import { createColorPalette } from '../utils/createColorPalette';
 import { createColorTexture } from '../utils/createColorTexture';
+<<<<<<< HEAD
 import { isValidColorCount } from "../utils/isValidColorCount";
+=======
+>>>>>>> main
 
 /**
  * Post-processing pass for applying a retro-style effect with color quantization and dithering
@@ -109,8 +116,13 @@ export class RetroPass extends ShaderPass {
   }
   public set colorPalette(colors: THREE.Color[]) {
     const colorCount = colors?.length;
+<<<<<<< HEAD
     if (!isValidColorCount(colorCount)) {
       throw new Error(`Invalid colorPalette, must contain between 2 and 4096 colours`);
+=======
+    if (!validColorCounts.includes(colorCount)) {
+      throw new Error(`Invalid colorPalette, must contain ${validColorCounts.join(', ')} colours`);
+>>>>>>> main
     }
 
     const colorTexture = createColorTexture(colors);
