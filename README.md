@@ -4,6 +4,8 @@ Inspired by [STDOOM](https://github.com/indyjo/STDOOM), RetroPass is a WebGL pos
 
 You can choose from the default 2, 4, 16, 256, 512 and 4096 colour palettes, or create a colour palette of any any size from 2 to 4096.
 
+[See it in action.](https://mesmotronic.github.io/three-retropass/)
+
 ## Installation
 
 ```bash
