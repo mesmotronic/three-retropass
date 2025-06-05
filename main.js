@@ -98,17 +98,17 @@ optionsFolder.add(retroPass, 'autoResolution').name('Dynamic Res?').onChange(() 
     applySelectedPlatform();
   }
 });
-optionsFolder.add(retroPass.resolution, 'x', 64, 1920, 1.0).name('Resolution X').onChange(value => {
+optionsFolder.add(retroPass.resolution, 'x', 32, 1920, 1.0).name('Resolution X').onChange(value => {
   retroPass.resolution.set(value, retroPass.resolution.y);
   retroPass.autoResolution = false;
   updateControllers();
 });
-optionsFolder.add(retroPass.resolution, 'y', 64, 1080, 1.0).name('Resolution Y').onChange(value => {
+optionsFolder.add(retroPass.resolution, 'y', 32, 1080, 1.0).name('Resolution Y').onChange(value => {
   retroPass.resolution.set(retroPass.resolution.x, value);
   retroPass.autoResolution = false;
   updateControllers();
 });
-optionsFolder.add(retroPass, 'pixelRatio', 0.1, 1.0, 0.1).name('Pixel Ratio').onChange(() => {
+optionsFolder.add(retroPass, 'pixelRatio', 0.05, 1.0, 0.05).name('Pixel Ratio').onChange(() => {
   retroPass.autoResolution = true;
   updateControllers();
 });
