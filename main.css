@@ -1,7 +1,7 @@
 html,
 body {
   background-color: #bfe3dd;
-  color: white;
+  color: black;
   margin: 0;
   padding: 0;
   overflow: hidden;
@@ -10,16 +10,26 @@ body {
   align-items: center;
   height: 100vh;
   width: 100vw;
-  font-family: Helvetica, Arial, sans-serif;
+  font-family: monospace;
+  font-size: 13px;
+  line-height: 20px;
 }
 
 a {
-  color: white;
+  color: #2983ff;
   text-decoration: none;
 }
 
-#links {
+#info {
   position: absolute;
   bottom: 15px;
   right: 15px;
+  text-align: right;
+  left: 15px;
+}
+
+@media screen and (max-width: 600px) {
+  #info {
+    text-align: center;
+  }
 }

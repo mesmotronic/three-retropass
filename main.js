@@ -75,27 +75,82 @@ composer.addPass(retroPass);
 
 const gui = new GUI();
 const platformNames = retroPlatforms.map(p => p.name);
-const params = { platform: platformNames[0] };
+const params = { platform: platformNames[0], fixedRatio: true };
+
+let selectedPlatform = retroPlatforms[0];
 
 gui.add(retroPass, 'enabled').name('Use RetroPass?');
+gui.add(params, 'fixedRatio').name('Use 4:3 Ratio?').onFinishChange(updateControllers);
 
-const retroPassFolder = gui.addFolder('RetroPass');
-retroPassFolder.add(retroPass, 'dithering').name('Use Dithering?');
-retroPassFolder.add(params, 'platform', platformNames).name('Retro Platform').onChange(name => {
-  const selected = retroPlatforms.find(p => p.name === name);
-  if (selected) {
-    const { name, ...rest } = selected;
-    Object.assign(retroPass, rest);
+const examplesFolder = gui.addFolder('Example Retro Platforms');
+examplesFolder.add(params, 'platform', platformNames).name('Platform / Palette').onChange(name => {
+  selectedPlatform = retroPlatforms.find(p => p.name === name);
+  applySelectedPlatform();
+});
+examplesFolder.open();
+
+const optionsFolder = gui.addFolder('Options');
+optionsFolder.add(retroPass, 'dithering').name('Use Dithering?');
+optionsFolder.add(retroPass, 'autoResolution').name('Dynamic Res?').onChange(() => {
+  if (retroPass.autoResolution) {
+    updateControllers();
+  } else {
+    applySelectedPlatform();
   }
 });
-retroPassFolder.open();
+optionsFolder.add(retroPass.resolution, 'x', 64, 1920, 1.0).name('Resolution X').onChange(value => {
+  retroPass.resolution.set(value, retroPass.resolution.y);
+  retroPass.autoResolution = false;
+  updateControllers();
+});
+optionsFolder.add(retroPass.resolution, 'y', 64, 1080, 1.0).name('Resolution Y').onChange(value => {
+  retroPass.resolution.set(retroPass.resolution.x, value);
+  retroPass.autoResolution = false;
+  updateControllers();
+});
+optionsFolder.add(retroPass, 'pixelRatio', 0.1, 1.0, 0.1).name('Pixel Ratio').onChange(() => {
+  retroPass.autoResolution = true;
+  updateControllers();
+});
+optionsFolder.open();
 
-const resizeHandler = () => {
+function applySelectedPlatform() {
+  const { name, ...rest } = selectedPlatform;
+  Object.assign(retroPass, rest, {
+    autoResolution: false,
+    autoDitheringOffset: true,
+  });
+
+  updateControllers();
+}
+
+function updateControllers() {
+  optionsFolder.controllers.forEach(control => control.updateDisplay());
+  resizeHandler();
+};
+
+
+function animate() {
+
+  const delta = clock.getDelta();
+
+  mixer.update(delta);
+
+  controls.update();
+  stats.update();
+  composer.render();
+
+}
+
+function resizeHandler() {
 
   const { innerWidth, innerHeight } = window;
   let width, height;
 
-  if (innerWidth > innerHeight) {
+  if (!params.fixedRatio) {
+    width = innerWidth;
+    height = innerHeight;
+  } else if (innerWidth > innerHeight) {
     height = innerHeight;
     width = height / 3 * 4;
   } else {
@@ -107,22 +162,12 @@ const resizeHandler = () => {
   camera.updateProjectionMatrix();
 
   renderer.setSize(width, height);
+  composer.setSize(width, height);
 
 };
 
 window.addEventListener('resize', resizeHandler);
 resizeHandler();
 
-function animate() {
-
-  const delta = clock.getDelta();
-
-  mixer.update(delta);
-
-  controls.update();
-
-  stats.update();
-
-  composer.render();
-
-}
+window.gui = gui; // Expose GUI globally for debugging
+window.retroPass = retroPass; // Expose RetroPass globally for debugging
