@@ -86,7 +86,7 @@ const retroParams: RetroPassParameters = {
   resolution: new THREE.Vector2(320, 200),
   colorCount: 16,
   dithering: true,
-  pixelRatio: 0,
+  pixelRatio: 0.1,
 };
 const retroPass = new RetroPass(retroParams);
 composer.addPass(retroPass);
@@ -112,7 +112,7 @@ retroFolder.add({ resolutionY: retroPass.resolution.y }, 'resolutionY', 64, 720,
   retroPass.resolution = new THREE.Vector2(retroPass.resolution.x, value);
 });
 retroFolder.add(retroPass, 'autoResolution').name('Auto Resolution?');
-retroFolder.add(retroPass, 'pixelRatio', 0, window.devicePixelRatio, 0.1).name('Pixel Ratio');
+retroFolder.add(retroPass, 'pixelRatio', 0.1, window.devicePixelRatio, 0.05).name('Pixel Ratio');
 const palettes: { [key: string]: THREE.Color[] | null; } = {
   Default: null,
   // Atari ST med res palette

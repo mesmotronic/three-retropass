@@ -175,7 +175,7 @@ export class RetroPass extends ShaderPass {
    */
   protected updateResolution(): void {
     if (this.autoResolution) {
-      this.resolution.set(this.size.x * this.pixelRatio, this.size.y * this.pixelRatio);
+      this.resolution.set(Math.round(this.size.x * this.pixelRatio), Math.round(this.size.y * this.pixelRatio));
     }
   }
 
