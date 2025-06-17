@@ -24,7 +24,7 @@ const stats = new Stats();
 container.appendChild(stats.dom);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setPixelRatio(Math.min(2.0, window.devicePixelRatio));
 container.appendChild(renderer.domElement);
 
 const pmremGenerator = new THREE.PMREMGenerator(renderer);
