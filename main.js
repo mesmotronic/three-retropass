@@ -9,6 +9,7 @@ import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 import { RetroPass } from '@mesmotronic/three-retropass';
+import { CrtPass } from '@mesmotronic/three-crtpass';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 
@@ -73,6 +74,12 @@ const retroPass = new RetroPass({ autoDitheringOffset: true, ...retroPlatforms[0
 retroPass.enabled = true;
 composer.addPass(retroPass);
 
+const crtPass = new CrtPass();
+crtPass.enabled = false;
+crtPass.scanLineIntensity = 0.25;
+crtPass.grainAmount = 0.4;
+composer.addPass(crtPass);
+
 const gui = new GUI();
 const platformNames = retroPlatforms.map(p => p.name);
 const params = { platform: platformNames[0], fixedRatio: true };
@@ -80,6 +87,7 @@ const params = { platform: platformNames[0], fixedRatio: true };
 let selectedPlatform = retroPlatforms[0];
 
 gui.add(retroPass, 'enabled').name('Use RetroPass?');
+gui.add(crtPass, 'enabled').name('Use CrtPass?');
 gui.add(params, 'fixedRatio').name('Use 4:3 Ratio?').onFinishChange(updateControllers);
 
 const examplesFolder = gui.addFolder('Example Retro Platforms');
@@ -89,30 +97,36 @@ examplesFolder.add(params, 'platform', platformNames).name('Platform / Palette')
 });
 examplesFolder.open();
 
-const optionsFolder = gui.addFolder('Options');
-optionsFolder.add(retroPass, 'dithering').name('Use Dithering?');
-optionsFolder.add(retroPass, 'autoResolution').name('Dynamic Res?').onChange(() => {
+const retroFolder = gui.addFolder('RetroPass');
+retroFolder.add(retroPass, 'dithering').name('Use Dithering?');
+retroFolder.add(retroPass, 'autoResolution').name('Dynamic Res?').onChange(() => {
   if (retroPass.autoResolution) {
     updateControllers();
   } else {
     applySelectedPlatform();
   }
 });
-optionsFolder.add(retroPass.resolution, 'x', 32, 1920, 1.0).name('Resolution X').onChange(value => {
+retroFolder.add(retroPass.resolution, 'x', 32, 1920, 1.0).name('Resolution X').onChange(value => {
   retroPass.resolution.set(value, retroPass.resolution.y);
   retroPass.autoResolution = false;
   updateControllers();
 });
-optionsFolder.add(retroPass.resolution, 'y', 32, 1080, 1.0).name('Resolution Y').onChange(value => {
+retroFolder.add(retroPass.resolution, 'y', 32, 1080, 1.0).name('Resolution Y').onChange(value => {
   retroPass.resolution.set(retroPass.resolution.x, value);
   retroPass.autoResolution = false;
   updateControllers();
 });
-optionsFolder.add(retroPass, 'pixelRatio', 0.05, 1.0, 0.05).name('Pixel Ratio').onChange(() => {
+retroFolder.add(retroPass, 'pixelRatio', 0.05, 1.0, 0.05).name('Pixel Ratio').onChange(() => {
   retroPass.autoResolution = true;
   updateControllers();
 });
-optionsFolder.open();
+retroFolder.open();
+
+const crtFolder = gui.addFolder('CrtPass');
+crtFolder.add(crtPass, 'scanLineDensity', 0, window.innerHeight, 1).name('Scan Line Density');
+crtFolder.add(crtPass, 'scanLineIntensity', 0, 1).name('Scan Line Intensity');
+crtFolder.add(crtPass, 'grainAmount', 0, 1).name('Grain Amount');
+crtFolder.open();
 
 function applySelectedPlatform() {
   const { name, ...rest } = selectedPlatform;
@@ -125,16 +139,15 @@ function applySelectedPlatform() {
 }
 
 function updateControllers() {
-  optionsFolder.controllers.forEach(control => control.updateDisplay());
+  retroFolder.controllers.forEach(control => control.updateDisplay());
   resizeHandler();
 };
 
 
 function animate() {
 
-  const delta = clock.getDelta();
-
-  mixer.update(delta);
+  mixer.update(clock.getDelta());
+  crtPass.update(clock.getElapsedTime());
 
   controls.update();
   stats.update();
