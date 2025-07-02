@@ -35,8 +35,8 @@ for (let i = 0; i < 16; i++) {
     });
     const sphere = new THREE.Mesh(geometry, material);
     sphere.position.set(
-      (i - 8) * 1.25,
-      (j - 8) * 1.25,
+      (i - 7.5) * 1.25,
+      (j - 7.5) * 1.25,
       0
     );
     spheres.push(sphere);
@@ -90,7 +90,7 @@ const retroFolder = gui.addFolder('RetroPass Parameters');
 retroFolder.add({ enabled: retroPass.enabled }, 'enabled').name('Enabled').onChange((value: boolean) => {
   retroPass.enabled = value;
 });
-retroFolder.add({ colorCount: retroPass.colorCount }, 'colorCount', [2, 4, 16, 256, 512, 4096]).name('Color Count').onChange((value: number) => {
+retroFolder.add({ colorCount: retroPass.colorCount }, 'colorCount', [2, 4, 16, 64, 256, 512, 4096]).name('Color Count').onChange((value: number) => {
   retroPass.colorCount = value;
 });
 retroFolder.add(retroPass, 'dithering').name('Dithering');
@@ -130,7 +130,6 @@ const palettes: { [key: string]: THREE.Color[] | null; } = {
     new THREE.Color(0.333, 0.0, 0.666), // Purple
     new THREE.Color(0.0, 0.666, 0.333), // Teal
   ],
-  Random256: Array.from({ length: 256 }, (i: number) => new THREE.Color(i / 256, Math.random(), 0)),
 };
 retroFolder.add({ colorPalette: 'Default' }, 'colorPalette', Object.keys(palettes)).name('Color Palette').onChange((value: string) => {
   retroPass.colorPalette = palettes[value] ?? createColorPalette(retroPass.colorCount);

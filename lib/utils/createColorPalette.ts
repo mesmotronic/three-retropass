@@ -37,8 +37,9 @@ export function createColorPalette(colorCount: ColorCount): THREE.Color[] {
     }
 
     // 256 colours - Web safe colours plus grayscale
-    case colorCount > 16: {
+    case colorCount > 64: {
       const palette: THREE.Color[] = [];
+      // Web safe colours
       for (let r = 0; r < 6; r++) {
         for (let g = 0; g < 6; g++) {
           for (let b = 0; b < 6; b++) {
@@ -46,10 +47,24 @@ export function createColorPalette(colorCount: ColorCount): THREE.Color[] {
           }
         }
       }
-      // Grayscale
+      // ... plus grayscale
       while (palette.length < 256) {
         const v = (palette.length - 216) / 39.0;
         palette.push(new THREE.Color(v, v, v));
+      }
+      colorPalette = palette;
+      break;
+    }
+
+    // 64 colours - Web safe colours plus grayscale
+    case colorCount > 16: {
+      const palette: THREE.Color[] = [];
+      for (let r = 0; r < 4; r++) {
+        for (let g = 0; g < 4; g++) {
+          for (let b = 0; b < 4; b++) {
+            palette.push(new THREE.Color(r / 3, g / 3, b / 3));
+          }
+        }
       }
       colorPalette = palette;
       break;
