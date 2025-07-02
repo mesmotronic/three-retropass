@@ -53,7 +53,18 @@ export const RetroShader: {
       vec3 higher = 1.055 * pow(linearColor, vec3(1.0/2.4)) - 0.055;
       return mix(lower, higher, cutoff);
     }
-    
+
+    // Quantize color to palette index for N colors (N = 2..4096)
+    int quantizeToPaletteIndex(vec3 c, int colorCount) {
+      // Find the number of steps per channel
+      int steps = int(pow(float(colorCount), 1.0/3.0) + 0.5);
+      steps = max(1, steps);
+      int r = int(clamp(floor(c.r * float(steps - 1) + 0.5), 0.0, float(steps - 1)));
+      int g = int(clamp(floor(c.g * float(steps - 1) + 0.5), 0.0, float(steps - 1)));
+      int b = int(clamp(floor(c.b * float(steps - 1) + 0.5), 0.0, float(steps - 1)));
+      return r * steps * steps + g * steps + b;
+    }
+
     void main() {
       // Compute retro UV for pixelation
       vec2 retroUV = (floor(vUv * resolution) + 0.5) / resolution;
@@ -75,19 +86,25 @@ export const RetroShader: {
         c = clamp(c, 0.0, 1.0);
       }
 
-      // Find closest color in palette
       vec3 closestColor = vec3(0.0);
-      float minDist = 1e6;
-      for (int i = 0; i < colorCount; i++) {
-        vec3 paletteColor = texture2D(colorTexture, vec2((float(i) + 0.5) / float(colorCount), 0.5)).rgb;
-        float dist = distance(c, paletteColor);
-        if (dist < minDist) {
-          minDist = dist;
-          closestColor = paletteColor;
+
+      // Use brute-force search for small palettes, quantize for large
+      if (colorCount <= 64) {
+        float minDist = 1e6;
+        for (int i = 0; i < colorCount; i++) {
+          vec3 paletteColor = texture2D(colorTexture, vec2((float(i) + 0.5) / float(colorCount), 0.5)).rgb;
+          float dist = distance(c, paletteColor);
+          if (dist < minDist) {
+            minDist = dist;
+            closestColor = paletteColor;
+          }
         }
+      } else {
+        int idx = quantizeToPaletteIndex(c, colorCount);
+        float paletteIndex = (float(idx) + 0.5) / float(colorCount);
+        closestColor = texture2D(colorTexture, vec2(paletteIndex, 0.5)).rgb;
       }
 
-      // gl_FragColor = vec4(closestColor, 1.0);
       gl_FragColor = vec4(linearToSrgb(closestColor), 1.0);
     }
   `,

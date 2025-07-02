@@ -130,6 +130,7 @@ const palettes: { [key: string]: THREE.Color[] | null; } = {
     new THREE.Color(0.333, 0.0, 0.666), // Purple
     new THREE.Color(0.0, 0.666, 0.333), // Teal
   ],
+  Random256: Array.from({ length: 256 }, (i: number) => new THREE.Color(i / 256, Math.random(), 0)),
 };
 retroFolder.add({ colorPalette: 'Default' }, 'colorPalette', Object.keys(palettes)).name('Color Palette').onChange((value: string) => {
   retroPass.colorPalette = palettes[value] ?? createColorPalette(retroPass.colorCount);
