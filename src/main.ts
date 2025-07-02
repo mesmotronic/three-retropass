@@ -13,7 +13,7 @@ scene.background = new THREE.Color(0x000000);
 
 // Camera setup
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 0, 10);
+camera.position.set(0, 0, 15);
 
 // Renderer setup
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -22,40 +22,28 @@ renderer.setPixelRatio(window.devicePixelRatio);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 document.body.appendChild(renderer.domElement);
 
-// Define a curated palette of bright and medium-shade colors
-const sphereColors = [
-  new THREE.Color(1.0, 0.0, 0.0), // Red
-  new THREE.Color(1.0, 0.5, 0.0), // Orange
-  new THREE.Color(1.0, 1.0, 0.0), // Yellow
-  new THREE.Color(0.0, 1.0, 0.0), // Green
-  new THREE.Color(0.0, 0.0, 1.0), // Blue
-  new THREE.Color(0.3, 0.0, 0.5), // Indigo
-  new THREE.Color(0.5, 0.0, 1.0), // Violet
-  new THREE.Color(1.0, 0.0, 1.0), // Magenta
-  new THREE.Color(0.0, 1.0, 1.0), // Cyan
-  new THREE.Color(1.0, 1.0, 1.0), // White
-  new THREE.Color(0.5, 0.5, 0.0), // Olive
-  new THREE.Color(0.5, 0.0, 0.5), // Purple
-  new THREE.Color(0.0, 0.5, 0.5), // Teal
-  new THREE.Color(0.5, 0.5, 0.5), // Gray
-  new THREE.Color(0.7, 0.3, 0.3), // Medium Red
-];
-
 const spheres: THREE.Mesh[] = [];
-const geometry = new THREE.SphereGeometry(1, 32, 32);
-for (let i = 0; i < sphereColors.length; i++) {
-  const material = new THREE.MeshPhongMaterial({
-    color: sphereColors[i],
-  });
-  const sphere = new THREE.Mesh(geometry, material);
-  sphere.position.set(
-    (Math.random() - 0.5) * 8,
-    (Math.random() - 0.5) * 8,
-    (Math.random() - 0.5) * 8
-  );
-  scene.add(sphere);
-  spheres.push(sphere);
+const geometry = new THREE.SphereGeometry(0.5, 16, 16);
+
+const colorPalette = createColorPalette(256);
+
+for (let i = 0; i < 16; i++) {
+  for (let j = 0; j < 16; j++) {
+    const colorIndex = i * 16 + j;
+    const material = new THREE.MeshPhongMaterial({
+      color: colorPalette[colorIndex],
+    });
+    const sphere = new THREE.Mesh(geometry, material);
+    sphere.position.set(
+      (i - 8) * 1.25,
+      (j - 8) * 1.25,
+      0
+    );
+    spheres.push(sphere);
+  }
 }
+
+scene.add(...spheres);
 
 const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.4); // Brighter ambient for base illumination
 scene.add(ambientLight);

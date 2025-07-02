@@ -48,7 +48,10 @@ export const RetroShader: {
 
     // Convert linear color to sRGB to correct brightness
     vec3 linearToSrgb(vec3 linearColor) {
-      return pow(linearColor, vec3(1.0 / 2.2));
+      vec3 cutoff = step(vec3(0.0031308), linearColor);
+      vec3 lower = linearColor * 12.92;
+      vec3 higher = 1.055 * pow(linearColor, vec3(1.0/2.4)) - 0.055;
+      return mix(lower, higher, cutoff);
     }
     
     void main() {
