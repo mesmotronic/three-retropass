@@ -162,6 +162,22 @@ export class RetroPass extends ShaderPass {
   }
 
   /**
+   * Using quantization for larger colour palettes massively improves performance,
+   * but only supports palettes ordered as a uniform RGB cube and not custom color palettes.
+   * 
+   * If you want to use a custom color palette of 64 or more colors, you must set 
+   * this to false
+   * 
+   * @default true
+   */
+  public get quantizationEnabled(): boolean {
+    return this.uniforms.quantizationEnabled.value;
+  }
+  public set quantizationEnabled(value: boolean) {
+    this.uniforms.quantizationEnabled.value = value;
+  }
+
+  /**
    * Set the pixel resolution to use (used by EffectComposer)
    * @see {@link RetroPass.resolution}
    */
