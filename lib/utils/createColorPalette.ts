@@ -1,12 +1,13 @@
 import * as THREE from 'three';
 import { ColorCount } from '../models/ColorCount';
 
-export function createQuantizedColorPalette(size: number): THREE.Color[] {
+export function createQuantizedColorPalette(levels: number): THREE.Color[] {
   const palette: THREE.Color[] = [];
-  for (let r = 0; r < size; r++) {
-    for (let g = 0; g < size; g++) {
-      for (let b = 0; b < size; b++) {
-        palette.push(new THREE.Color(r / (size - 1), g / (size - 1), b / (size - 1)));
+  const divisor = levels - 1;
+  for (let r = 0; r < levels; r++) {
+    for (let g = 0; g < levels; g++) {
+      for (let b = 0; b < levels; b++) {
+        palette.push(new THREE.Color(r / divisor, g / divisor, b / divisor));
       }
     }
   }

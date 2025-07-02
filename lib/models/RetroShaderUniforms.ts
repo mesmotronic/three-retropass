@@ -11,7 +11,7 @@ export interface RetroShaderUniforms {
   colorTexture: IUniform<THREE.DataTexture>;
   dithering: IUniform<boolean>;
   ditheringOffset: IUniform<number>;
-  quantizationEnabled: IUniform<boolean>;
+  quantizeEnabled: IUniform<boolean>;
 
   [uniform: string]: THREE.IUniform<any>;
 }
