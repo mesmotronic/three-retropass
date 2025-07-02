@@ -2,7 +2,7 @@
 
 Inspired by [STDOOM](https://github.com/indyjo/STDOOM), RetroPass is a WebGL post-processing effect for Three.js that enables you to give your project a retro look and feel, with pixelation and colour quantisation for a nostalgic, low-res aesthetic — ideal for games or apps evoking classic video game vibes.
 
-You can choose from the default 2, 4, 16, 256, 512 and 4096 colour palettes, or create a colour palette of any any size from 2 to 4096.
+You can choose from the default 2, 4, 16, 64, 256, 512 and 4096 colour palettes, or create a custom palette of any any size from 2 to 4096 colours.
 
 [See it in action.](https://mesmotronic.github.io/three-retropass/)
 

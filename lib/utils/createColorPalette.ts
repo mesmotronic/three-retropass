@@ -1,6 +1,18 @@
 import * as THREE from 'three';
 import { ColorCount } from '../models/ColorCount';
 
+export function createQuantizedColorPalette(size: number): THREE.Color[] {
+  const palette: THREE.Color[] = [];
+  for (let r = 0; r < size; r++) {
+    for (let g = 0; g < size; g++) {
+      for (let b = 0; b < size; b++) {
+        palette.push(new THREE.Color(r / (size - 1), g / (size - 1), b / (size - 1)));
+      }
+    }
+  }
+  return palette;
+}
+
 /**
  * Creates a color palette based on the specified color count
  */
@@ -10,48 +22,30 @@ export function createColorPalette(colorCount: ColorCount): THREE.Color[] {
   switch (true) {
     // 4096 colours - Full Atari STE / Amiga color palette
     case colorCount > 512: {
-      const palette: THREE.Color[] = [];
-      for (let r = 0; r < 16; r++) {
-        for (let g = 0; g < 16; g++) {
-          for (let b = 0; b < 16; b++) {
-            palette.push(new THREE.Color(r / 15, g / 15, b / 15));
-          }
-        }
-      }
-      colorPalette = palette;
+      colorPalette = createQuantizedColorPalette(16);
       break;
     }
 
     // 512 colours - Full Atari ST (before E) color palette
     case colorCount > 256: {
-      const palette: THREE.Color[] = [];
-      for (let r = 0; r < 8; r++) {
-        for (let g = 0; g < 8; g++) {
-          for (let b = 0; b < 8; b++) {
-            palette.push(new THREE.Color(r / 7, g / 7, b / 7));
-          }
-        }
+      colorPalette = createQuantizedColorPalette(8);
+      break;
+    }
+
+    // 256 colours - Web safe colours plus grayscale
+    case colorCount > 64: {
+      const palette = createQuantizedColorPalette(6);
+      while (palette.length < 256) {
+        const v = (palette.length - 216) / 39.0;
+        palette.push(new THREE.Color(v, v, v));
       }
       colorPalette = palette;
       break;
     }
 
-    // 256 colours - Web safe palette plus grayscale
+    // 64 colours - Web safe colours plus grayscale
     case colorCount > 16: {
-      const palette: THREE.Color[] = [];
-      const steps = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0];
-      for (let r of steps) {
-        for (let g of steps) {
-          for (let b of steps) {
-            palette.push(new THREE.Color(r, g, b));
-          }
-        }
-      }
-      for (let i = 0; i < 40; i++) {
-        const v = i / 39.0;
-        palette.push(new THREE.Color(v, v, v));
-      }
-      colorPalette = palette.slice(0, 256);
+      colorPalette = createQuantizedColorPalette(4);
       break;
     }
 
