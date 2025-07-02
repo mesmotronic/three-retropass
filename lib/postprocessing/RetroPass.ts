@@ -169,11 +169,11 @@ export class RetroPass extends ShaderPass {
    * 
    * @default true
    */
-  public get quantizationEnabled(): boolean {
-    return this.uniforms.quantizationEnabled.value;
+  public get quantizeEnabled(): boolean {
+    return this.uniforms.quantizeEnabled.value;
   }
-  public set quantizationEnabled(value: boolean) {
-    this.uniforms.quantizationEnabled.value = value;
+  public set quantizeEnabled(value: boolean) {
+    this.uniforms.quantizeEnabled.value = value;
   }
 
   /**
