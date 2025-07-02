@@ -91,7 +91,7 @@ export const RetroShader: RetroShaderParameters = {
       vec3 closestColor = vec3(0.0);
 
       // By default we use brute-force for small palettes, quantize for large
-      if (quantizationEnabled == false || colorCount < 64) {
+      if (quantizationEnabled == false || colorCount <= 64) {
         float minDist = 1e6;
         for (int i = 0; i < colorCount; i++) {
           vec3 paletteColor = texture2D(colorTexture, vec2((float(i) + 0.5) / float(colorCount), 0.5)).rgb;

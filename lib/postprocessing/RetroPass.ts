@@ -165,8 +165,7 @@ export class RetroPass extends ShaderPass {
    * Using quantization for larger colour palettes massively improves performance,
    * but only supports palettes ordered as a uniform RGB cube and not custom color palettes.
    * 
-   * If you want to use a custom color palette of 64 or more colors, you must set 
-   * this to false
+   * If you want to use a custom color palette over 64 colors, you must set this to false
    * 
    * @default true
    */
