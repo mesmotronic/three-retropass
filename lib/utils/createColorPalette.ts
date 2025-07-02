@@ -36,22 +36,22 @@ export function createColorPalette(colorCount: ColorCount): THREE.Color[] {
       break;
     }
 
-    // 256 colours - Web safe palette plus grayscale
+    // 256 colours - Web safe colours plus grayscale
     case colorCount > 16: {
       const palette: THREE.Color[] = [];
-      const steps = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0];
-      for (let r of steps) {
-        for (let g of steps) {
-          for (let b of steps) {
-            palette.push(new THREE.Color(r, g, b));
+      for (let r = 0; r < 6; r++) {
+        for (let g = 0; g < 6; g++) {
+          for (let b = 0; b < 6; b++) {
+            palette.push(new THREE.Color(r / 5, g / 5, b / 5));
           }
         }
       }
-      for (let i = 0; i < 40; i++) {
-        const v = i / 39.0;
+      // Grayscale
+      while (palette.length < 256) {
+        const v = (palette.length - 216) / 39.0;
         palette.push(new THREE.Color(v, v, v));
       }
-      colorPalette = palette.slice(0, 256);
+      colorPalette = palette;
       break;
     }
 
