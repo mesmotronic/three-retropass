@@ -46,6 +46,11 @@ export const RetroShader: {
       15.0 / 16.0, 7.0 / 16.0, 13.0 / 16.0, 5.0 / 16.0
     );
 
+    // Convert linear color to sRGB to correct brightness
+    vec3 linearToSrgb(vec3 linearColor) {
+      return pow(linearColor, vec3(1.0 / 2.2));
+    }
+    
     void main() {
       // Compute retro UV for pixelation
       vec2 retroUV = (floor(vUv * resolution) + 0.5) / resolution;
@@ -79,7 +84,8 @@ export const RetroShader: {
         }
       }
 
-      gl_FragColor = vec4(closestColor, 1.0);
+      // gl_FragColor = vec4(closestColor, 1.0);
+      gl_FragColor = vec4(linearToSrgb(closestColor), 1.0);
     }
   `,
 };
