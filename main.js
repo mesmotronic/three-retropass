@@ -71,7 +71,6 @@ const renderPass = new RenderPass(scene, camera);
 composer.addPass(renderPass);
 
 const retroPass = new RetroPass({ autoDitheringOffset: true, ...retroPlatforms[0] });
-retroPass.quantizeEnabled = false;
 retroPass.enabled = true;
 composer.addPass(retroPass);
 
