@@ -97,7 +97,8 @@ export class RetroPass extends ShaderPass {
       if (!isValidColorCount(value)) {
         throw new Error(`Invalid colorPalette, must contain between 2 and 4096 colours`);
       }
-      this.colorPalette = createColorPalette(value);
+      this.quantizeEnabled = true;
+      this.setColorPalette(createColorPalette(value));
     }
   }
 
@@ -112,18 +113,8 @@ export class RetroPass extends ShaderPass {
     if (!isValidColorCount(colorCount)) {
       throw new Error(`Invalid colorPalette, must contain between 2 and 4096 colours`);
     }
-
-    const colorTexture = createColorTexture(colors);
-
-    this.uniforms.colorCount.value = colorCount;
-    this.uniforms.colorTexture.value?.dispose();
-    this.uniforms.colorTexture.value = colorTexture;
-
-    if (this.autoDitheringOffset) {
-      this.updateDitheringOffset();
-    }
-
-    this.#colorPalette = colors.slice();
+    this.quantizeEnabled = false;
+    this.setColorPalette(colors);
   }
 
   /**
@@ -167,6 +158,7 @@ export class RetroPass extends ShaderPass {
    * 
    * If you want to use a custom color palette over 64 colors, you must set this to false
    * 
+   * @deprecated  This is now set automatically based on the color palette
    * @default true
    */
   public get quantizeEnabled(): boolean {
@@ -199,7 +191,22 @@ export class RetroPass extends ShaderPass {
    */
   protected updateDitheringOffset(): void {
     if (this.autoDitheringOffset) {
-      this.ditheringOffset = 0.1 + 0.9 / (this.colorCount - 1);
+      this.ditheringOffset = 0.025 + 0.975 / (this.colorCount - 1);
     }
+  }
+
+  protected setColorPalette(colors: THREE.Color[]): void {
+    const colorCount = colors?.length;
+    const colorTexture = createColorTexture(colors);
+
+    this.uniforms.colorCount.value = colorCount;
+    this.uniforms.colorTexture.value?.dispose();
+    this.uniforms.colorTexture.value = colorTexture;
+
+    if (this.autoDitheringOffset) {
+      this.updateDitheringOffset();
+    }
+
+    this.#colorPalette = colors.slice();
   }
 }
