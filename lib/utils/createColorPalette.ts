@@ -1,9 +1,15 @@
 import * as THREE from 'three';
 import { ColorCount } from '../models/ColorCount';
 
-export function createQuantizedColorPalette(levels: number): THREE.Color[] {
+/**
+ * Creates a 3D cube quantized colour palette using NxNxN steps where N is the 
+ * number of levels per channel, optionally padded with greyscale to the 
+ * specified palette size
+ */
+export function createQuantizedColorPalette(levels: number, paletteSize = 0): THREE.Color[] {
   const palette: THREE.Color[] = [];
-  const divisor = levels - 1;
+  let divisor = levels - 1;
+
   for (let r = 0; r < levels; r++) {
     for (let g = 0; g < levels; g++) {
       for (let b = 0; b < levels; b++) {
@@ -11,6 +17,15 @@ export function createQuantizedColorPalette(levels: number): THREE.Color[] {
       }
     }
   }
+
+  const cubeSize = palette.length;
+  divisor = paletteSize - cubeSize - 1;
+
+  while (palette.length < paletteSize) {
+    const v = (palette.length - cubeSize) / divisor;
+    palette.push(new THREE.Color(v, v, v));
+  }
+
   return palette;
 }
 
@@ -34,24 +49,31 @@ export function createColorPalette(colorCount: ColorCount): THREE.Color[] {
     }
 
     // 256 colours - Web safe colours plus grayscale
-    case colorCount > 64: {
-      const palette = createQuantizedColorPalette(6);
-      while (palette.length < 256) {
-        const v = (palette.length - 216) / 39.0;
-        palette.push(new THREE.Color(v, v, v));
-      }
-      colorPalette = palette;
+    case colorCount > 128: {
+      colorPalette = createQuantizedColorPalette(6, 256);
       break;
     }
 
-    // 64 colours - Web safe colours plus grayscale
-    case colorCount > 16: {
+    // 128 colours - Similar to Atari XL/XE
+    case colorCount > 64: {
+      colorPalette = createQuantizedColorPalette(5, 128);
+      break;
+    }
+
+    // 64 colours - Similar to NES, Sega Master System
+    case colorCount > 32: {
       colorPalette = createQuantizedColorPalette(4);
       break;
     }
 
+    // 32 colours
+    case colorCount > 16: {
+      colorPalette = createQuantizedColorPalette(3, 32);
+      break;
+    }
+
     // 16 colours - Microsoft Windows Standard VGA Palette
-    case colorCount > 4: {
+    case colorCount > 8: {
       colorPalette = [
         new THREE.Color(0x000000), // Black
         new THREE.Color(0x0000AA), // Blue
@@ -70,6 +92,12 @@ export function createColorPalette(colorCount: ColorCount): THREE.Color[] {
         new THREE.Color(0xFFFF55), // Yellow
         new THREE.Color(0xFFFFFF), // White
       ];
+      break;
+    }
+
+    // 8 colours - Similar to ZX Spectrum (without dark shades), BBC Micro, Acorn Electron
+    case colorCount > 4: {
+      colorPalette = createQuantizedColorPalette(2);
       break;
     }
 

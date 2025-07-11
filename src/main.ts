@@ -90,7 +90,7 @@ const retroFolder = gui.addFolder('RetroPass Parameters');
 retroFolder.add({ enabled: retroPass.enabled }, 'enabled').name('Enabled').onChange((value: boolean) => {
   retroPass.enabled = value;
 });
-retroFolder.add({ colorCount: retroPass.colorCount }, 'colorCount', [2, 4, 16, 64, 256, 512, 4096]).name('Color Count').onChange((value: number) => {
+retroFolder.add({ colorCount: retroPass.colorCount }, 'colorCount', [2, 4, 8, 16, 32, 64, 128, 256, 512, 4096]).name('Color Count').onChange((value: number) => {
   retroPass.colorCount = value;
 });
 retroFolder.add(retroPass, 'dithering').name('Dithering');
