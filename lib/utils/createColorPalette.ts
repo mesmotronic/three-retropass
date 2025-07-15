@@ -36,39 +36,10 @@ export function createColorPalette(colorCount: ColorCount): THREE.Color[] {
   let colorPalette: THREE.Color[] = [];
 
   switch (true) {
-    // 4096 colours - Full Atari STE / Amiga color palette
-    case colorCount > 512: {
-      colorPalette = createQuantizedColorPalette(16);
-      break;
-    }
-
-    // 512 colours - Full Atari ST (before E) color palette
-    case colorCount > 256: {
-      colorPalette = createQuantizedColorPalette(8);
-      break;
-    }
-
-    // 256 colours - Web safe colours plus grayscale
-    case colorCount > 128: {
-      colorPalette = createQuantizedColorPalette(6, 256);
-      break;
-    }
-
-    // 128 colours - Similar to Atari XL/XE
-    case colorCount > 64: {
-      colorPalette = createQuantizedColorPalette(5, 128);
-      break;
-    }
-
-    // 64 colours - Similar to NES, Sega Master System
-    case colorCount > 32: {
-      colorPalette = createQuantizedColorPalette(4);
-      break;
-    }
-
-    // 32 colours
+    // Find optimised palette closest to the requested color count
     case colorCount > 16: {
-      colorPalette = createQuantizedColorPalette(3, 32);
+      const levels = Math.min(16, Math.floor(Math.pow(colorCount + 1, 1 / 3)));
+      colorPalette = createQuantizedColorPalette(levels, colorCount);
       break;
     }
 
@@ -127,7 +98,7 @@ export function createColorPalette(colorCount: ColorCount): THREE.Color[] {
   }
 
   if (colorPalette.length !== colorCount) {
-    console.warn(`No default color palette found for ${colorCount} colors, using ${colorPalette.length} colors instead.`);
+    console.warn(`${colorCount} colour palette not available, returned ${colorPalette.length}.`);
   }
 
   return colorPalette;

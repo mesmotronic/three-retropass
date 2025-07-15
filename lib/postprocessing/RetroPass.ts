@@ -191,7 +191,7 @@ export class RetroPass extends ShaderPass {
    */
   protected updateDitheringOffset(): void {
     if (this.autoDitheringOffset) {
-      this.ditheringOffset = 0.025 + 0.975 / (this.colorCount - 1);
+      this.ditheringOffset = 0.03 + 0.97 / (this.colorCount - 1);
     }
   }
 
