@@ -87,13 +87,20 @@ document.body.appendChild(stats.dom);
 
 // GUI
 const gui = new GUI();
+gui.add({ shading: true }, 'shading').name('Use shading?').onChange((value: boolean) => {
+  spheres.forEach((sphere) => {
+    const material = sphere.material as THREE.MeshPhongMaterial;
+    const { color } = material;
+
+    sphere.material = value
+      ? new THREE.MeshPhongMaterial({ color })
+      : new THREE.MeshBasicMaterial({ color });
+  });
+});
+
 const retroFolder = gui.addFolder('RetroPass Parameters');
-retroFolder.add({ enabled: retroPass.enabled }, 'enabled').name('Enabled').onChange((value: boolean) => {
-  retroPass.enabled = value;
-});
-retroFolder.add({ colorCount: retroPass.colorCount }, 'colorCount', [2, 4, 8, 16, 32, 64, 128, 256, 512, 4096]).name('Color Count').onChange((value: number) => {
-  retroPass.colorCount = value;
-});
+retroFolder.add(retroPass, 'enabled').name('Enabled');
+retroFolder.add(retroPass, 'colorCount', [2, 4, 8, 16, 32, 64, 128, 256, 512, 4096]).name('Color Count');
 retroFolder.add(retroPass, 'dithering').name('Dithering');
 retroFolder.add({ resolutionX: retroPass.resolution.x }, 'resolutionX', 64, 1280, 10).name('Resolution X').onChange((value: number) => {
   retroPass.resolution = new THREE.Vector2(value, retroPass.resolution.y);
@@ -103,6 +110,8 @@ retroFolder.add({ resolutionY: retroPass.resolution.y }, 'resolutionY', 64, 720,
 });
 retroFolder.add(retroPass, 'autoResolution').name('Auto Resolution?');
 retroFolder.add(retroPass, 'pixelRatio', 0.1, window.devicePixelRatio, 0.05).name('Pixel Ratio');
+retroFolder.add(retroPass, 'isSrgb').name('Use sRGB?');
+
 const palettes: { [key: string]: THREE.Color[] | null; } = {
   Default: null,
   // Atari ST med res palette
