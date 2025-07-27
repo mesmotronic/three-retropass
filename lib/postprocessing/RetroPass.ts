@@ -97,7 +97,7 @@ export class RetroPass extends ShaderPass {
       if (!isValidColorCount(value)) {
         throw new Error(`Invalid colorPalette, must contain between 2 and 4096 colours`);
       }
-      this.quantizeEnabled = true;
+      this.uniforms.isQuantized.value = true;
       this.setColorPalette(createColorPalette(value));
     }
   }
@@ -113,7 +113,7 @@ export class RetroPass extends ShaderPass {
     if (!isValidColorCount(colorCount)) {
       throw new Error(`Invalid colorPalette, must contain between 2 and 4096 colours`);
     }
-    this.quantizeEnabled = false;
+    this.uniforms.isQuantized.value = false;
     this.setColorPalette(colors);
   }
 
@@ -153,19 +153,13 @@ export class RetroPass extends ShaderPass {
   }
 
   /**
-   * Using quantization for larger colour palettes massively improves performance,
-   * but only supports palettes ordered as a uniform RGB cube and not custom color palettes.
-   * 
-   * If you want to use a custom color palette over 64 colors, you must set this to false
-   * 
-   * @deprecated  This is now set automatically based on the color palette
-   * @default true
+   * Whether to use sRGB color space (default is true)
    */
-  public get quantizeEnabled(): boolean {
-    return this.uniforms.quantizeEnabled.value;
+  public get isSrgb(): boolean {
+    return this.uniforms.isSrgb.value;
   }
-  public set quantizeEnabled(value: boolean) {
-    this.uniforms.quantizeEnabled.value = value;
+  public set isSrgb(value: boolean) {
+    this.uniforms.isSrgb.value = value;
   }
 
   /**
