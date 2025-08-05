@@ -84,6 +84,7 @@ crtPass.grainAmount = 0.4;
 composer.addPass(crtPass);
 
 const outputPass = new OutputPass();
+outputPass.enabled = false;
 composer.addPass(outputPass);
 
 const gui = new GUI();
