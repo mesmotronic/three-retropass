@@ -153,16 +153,6 @@ export class RetroPass extends ShaderPass {
   }
 
   /**
-   * Whether to use sRGB color space (default is true)
-   */
-  public get isSrgb(): boolean {
-    return this.uniforms.isSrgb.value;
-  }
-  public set isSrgb(value: boolean) {
-    this.uniforms.isSrgb.value = value;
-  }
-
-  /**
    * Set the pixel resolution to use (used by EffectComposer)
    * @see {@link RetroPass.resolution}
    */

@@ -4,6 +4,7 @@ import Stats from 'three/addons/libs/stats.module.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { createColorPalette, RetroPass, RetroPassParameters } from '../lib/main';
 import './main.css';
 
@@ -20,7 +21,7 @@ const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
+// renderer.toneMapping = THREE.ACESFilmicToneMapping;
 document.body.appendChild(renderer.domElement);
 
 const spheres: THREE.Mesh[] = [];
@@ -81,6 +82,9 @@ const retroParams: RetroPassParameters = {
 const retroPass = new RetroPass(retroParams);
 composer.addPass(retroPass);
 
+const outputPass = new OutputPass();
+composer.addPass(outputPass);
+
 // Stats
 const stats = new Stats();
 document.body.appendChild(stats.dom);
@@ -110,7 +114,6 @@ retroFolder.add({ resolutionY: retroPass.resolution.y }, 'resolutionY', 64, 720,
 });
 retroFolder.add(retroPass, 'autoResolution').name('Auto Resolution?');
 retroFolder.add(retroPass, 'pixelRatio', 0.1, window.devicePixelRatio, 0.05).name('Pixel Ratio');
-retroFolder.add(retroPass, 'isSrgb').name('Use sRGB?');
 
 const palettes: { [key: string]: THREE.Color[] | null; } = {
   Default: null,

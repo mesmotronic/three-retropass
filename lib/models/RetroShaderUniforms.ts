@@ -12,7 +12,6 @@ export interface RetroShaderUniforms {
   dithering: IUniform<boolean>;
   ditheringOffset: IUniform<number>;
   isQuantized: IUniform<boolean>;
-  isSrgb: IUniform<boolean>;
 
   [uniform: string]: THREE.IUniform<any>;
 }

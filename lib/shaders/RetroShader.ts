@@ -19,7 +19,6 @@ export const RetroShader: RetroShaderParameters = {
     dithering: { value: true },
     ditheringOffset: { value: 0.2 },
     isQuantized: { value: true },
-    isSrgb: { value: true },
   },
 
   vertexShader: /* glsl */ `
@@ -49,18 +48,6 @@ export const RetroShader: RetroShaderParameters = {
       3.0 / 16.0, 11.0 / 16.0, 1.0 / 16.0, 9.0 / 16.0,
       15.0 / 16.0, 7.0 / 16.0, 13.0 / 16.0, 5.0 / 16.0
     );
-
-    // Convert linear color to sRGB to correct brightness
-    vec3 linearToSrgb(vec3 linearColor) {
-      if (!isSrgb) {
-        vec3 cutoff = step(vec3(0.0031308), linearColor);
-        vec3 lower = linearColor * 12.92;
-        vec3 higher = 1.055 * pow(linearColor, vec3(1.0/2.4)) - 0.055;
-        return mix(lower, higher, cutoff);
-      }
-
-      return linearColor;
-    }
 
     // Quantize color to palette index for N colors (N = 2..4096)
     int quantizeToPaletteIndex(vec3 c, int colorCount) {
@@ -113,7 +100,7 @@ export const RetroShader: RetroShaderParameters = {
         closestColor = texture2D(colorTexture, vec2(paletteIndex, 0.5)).rgb;
       }
 
-      gl_FragColor = vec4(linearToSrgb(closestColor), 1.0);
+      gl_FragColor = vec4(closestColor, 1.0);
     }
   `,
 };
