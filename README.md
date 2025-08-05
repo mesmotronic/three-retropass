@@ -14,12 +14,6 @@ npm install @mesmotronic/three-retropass
 
 Requires `three` as a peer dependency.
 
-## Colour palettes
-
-By default, palettes of up to 64 colours can be arbitrary, but larger palettes are expected to be a uniform quantized RGB cube (e.g. 8×8×8 for 512 colours) to ensure best performance.
-
-Custom palettes above 64 colours are supported by setting `quantizeEnabled` to `false`, but this may significantly reduce performance.
-
 ## Usage
 
 Here’s an example of how to use RetroPass in your Three.js project, showing a basic scene with a retro effect at 320x200 resolution with 16 colours and dithering enabled.

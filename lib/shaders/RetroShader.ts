@@ -18,7 +18,7 @@ export const RetroShader: RetroShaderParameters = {
     colorTexture: { value: createColorTexture(createColorPalette(16)) },
     dithering: { value: true },
     ditheringOffset: { value: 0.2 },
-    quantizeEnabled: { value: true },
+    isQuantized: { value: true },
   },
 
   vertexShader: /* glsl */ `
@@ -36,7 +36,8 @@ export const RetroShader: RetroShaderParameters = {
     uniform sampler2D colorTexture;
     uniform bool dithering;
     uniform float ditheringOffset;
-    uniform bool quantizeEnabled;
+    uniform bool isQuantized;
+    uniform bool isSrgb;
 
     varying vec2 vUv;
 
@@ -47,14 +48,6 @@ export const RetroShader: RetroShaderParameters = {
       3.0 / 16.0, 11.0 / 16.0, 1.0 / 16.0, 9.0 / 16.0,
       15.0 / 16.0, 7.0 / 16.0, 13.0 / 16.0, 5.0 / 16.0
     );
-
-    // Convert linear color to sRGB to correct brightness
-    vec3 linearToSrgb(vec3 linearColor) {
-      vec3 cutoff = step(vec3(0.0031308), linearColor);
-      vec3 lower = linearColor * 12.92;
-      vec3 higher = 1.055 * pow(linearColor, vec3(1.0/2.4)) - 0.055;
-      return mix(lower, higher, cutoff);
-    }
 
     // Quantize color to palette index for N colors (N = 2..4096)
     int quantizeToPaletteIndex(vec3 c, int colorCount) {
@@ -91,7 +84,7 @@ export const RetroShader: RetroShaderParameters = {
       vec3 closestColor = vec3(0.0);
 
       // By default we use brute-force for small palettes, quantize for large
-      if (quantizeEnabled == false || colorCount < 64) {
+      if (isQuantized == false || colorCount < 64) {
         float minDist = 1e6;
         for (int i = 0; i < colorCount; i++) {
           vec3 paletteColor = texture2D(colorTexture, vec2((float(i) + 0.5) / float(colorCount), 0.5)).rgb;
@@ -107,7 +100,7 @@ export const RetroShader: RetroShaderParameters = {
         closestColor = texture2D(colorTexture, vec2(paletteIndex, 0.5)).rgb;
       }
 
-      gl_FragColor = vec4(linearToSrgb(closestColor), 1.0);
+      gl_FragColor = vec4(closestColor, 1.0);
     }
   `,
 };
