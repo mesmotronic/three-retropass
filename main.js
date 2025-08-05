@@ -12,6 +12,7 @@ import { RetroPass } from '@mesmotronic/three-retropass';
 import { CrtPass } from '@mesmotronic/three-crtpass';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 import { retroPlatforms } from './retroPlatforms.js';
@@ -26,8 +27,8 @@ container.appendChild(stats.dom);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(Math.min(2.0, window.devicePixelRatio));
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
+// renderer.toneMapping = THREE.ACESFilmicToneMapping;
 container.appendChild(renderer.domElement);
 
 const pmremGenerator = new THREE.PMREMGenerator(renderer);
@@ -81,6 +82,9 @@ crtPass.enabled = false;
 crtPass.scanLineIntensity = 0.25;
 crtPass.grainAmount = 0.4;
 composer.addPass(crtPass);
+
+const outputPass = new OutputPass();
+composer.addPass(outputPass);
 
 const gui = new GUI();
 const platformNames = retroPlatforms.map(p => p.name);
