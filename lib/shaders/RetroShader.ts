@@ -60,6 +60,20 @@ export const RetroShader: RetroShaderParameters = {
       return r * steps * steps + g * steps + b;
     }
 
+    // Optimized: Directly quantize to the nearest cube color, no brute-force search
+    vec3 quantizeToNearestCubeColor(vec3 c, int colorCount) {
+      // Find largest N such that N^3 <= colorCount
+      float stepsF = floor(pow(float(colorCount), 1.0/3.0));
+      float maxIdx = stepsF - 1.0;
+
+      // Quantize each channel to nearest step
+      float r = floor(c.r * maxIdx + 0.5) / maxIdx;
+      float g = floor(c.g * maxIdx + 0.5) / maxIdx;
+      float b = floor(c.b * maxIdx + 0.5) / maxIdx;
+
+      return vec3(r, g, b);
+    }
+
     void main() {
       // Compute retro UV for pixelation
       vec2 retroUV = (floor(vUv * resolution) + 0.5) / resolution;
@@ -95,9 +109,7 @@ export const RetroShader: RetroShaderParameters = {
           }
         }
       } else {
-        int idx = quantizeToPaletteIndex(c, colorCount);
-        float paletteIndex = (float(idx) + 0.5) / float(colorCount);
-        closestColor = texture2D(colorTexture, vec2(paletteIndex, 0.5)).rgb;
+        closestColor = quantizeToNearestCubeColor(c, colorCount);
       }
 
       gl_FragColor = vec4(closestColor, 1.0);
