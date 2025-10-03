@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 export const retroPlatforms = [
   {
-    name: "Atari ST (Low Resolution)",
+    name: "Atari ST (Low Res)",
     resolution: new THREE.Vector2(320, 200),
     colorPalette: [
       new THREE.Color(0xbfe4dd),
@@ -24,7 +24,7 @@ export const retroPlatforms = [
     ],
   },
   {
-    name: "Atari ST (Medium Resolution)",
+    name: "Atari ST (Medium Res)",
     resolution: new THREE.Vector2(640, 200),
     colorPalette: [
       new THREE.Color(0x514C4A),
@@ -34,7 +34,7 @@ export const retroPlatforms = [
     ],
   },
   {
-    name: "Atari ST (High Resolution)",
+    name: "Atari ST (High Res)",
     resolution: new THREE.Vector2(640, 400),
     colorPalette: [
       new THREE.Color(0x000000), // Black
@@ -42,26 +42,46 @@ export const retroPlatforms = [
     ],
   },
   {
-    name: "Atari ST (Low Resolution, 512 Colors)",
+    name: "Atari TT (Low Res)",
+    resolution: new THREE.Vector2(320, 480),
+    colorCount: 256,
+  },
+  {
+    name: "Atari ST (Low Res, 512 Color)",
     resolution: new THREE.Vector2(320, 200),
     colorCount: 512,
   },
   {
-    name: "CGA (Low Resolution)",
+    name: "Atari ST (Low Res, 4096 Colors)",
+    resolution: new THREE.Vector2(320, 200),
+    colorCount: 4096,
+  },
+  {
+    name: "CGA (Low Res, Palette 0)",
     resolution: new THREE.Vector2(320, 200),
     colorPalette: [
-      new THREE.Color(0x000000), // Black
-      new THREE.Color(0x00CCCC), // Cyan
-      new THREE.Color(0xCC00CC), // Magenta
-      new THREE.Color(0xFFFFFF), // White
+      new THREE.Color(0x000000), // Black (Background Color)
+      new THREE.Color(0x00AAAA), // Cyan
+      new THREE.Color(0xAA00AA), // Magenta
+      new THREE.Color(0xFFFFFF), // White (High-Intensity Light Gray)
     ],
   },
   {
-    name: "CGA (High Resolution)",
+    name: "CGA (Low Res, Palette 1)",
+    resolution: new THREE.Vector2(320, 200),
+    colorPalette: [
+      new THREE.Color(0x000000), // Black (Background Color)
+      new THREE.Color(0xAA0000), // Red
+      new THREE.Color(0x00AA00), // Green
+      new THREE.Color(0xFFFF00), // Yellow (High-Intensity Brown/Dark Yellow)
+    ],
+  },
+  {
+    name: "CGA (High Res)",
     resolution: new THREE.Vector2(640, 200),
     colorPalette: [
-      new THREE.Color(0x000000), // Black
-      new THREE.Color(0xFFFFFF), // White
+      new THREE.Color(0x000000), // Black (Background Color)
+      new THREE.Color(0xFFFFFF), // White (Foreground Color)
     ],
   },
   {
@@ -87,7 +107,7 @@ export const retroPlatforms = [
     ],
   },
   {
-    name: "VGA (16-color)",
+    name: "VGA (Windows, 16 Colors)",
     resolution: new THREE.Vector2(640, 480),
     colorPalette: [
       new THREE.Color(0x000000), // Black
@@ -107,6 +127,11 @@ export const retroPlatforms = [
       new THREE.Color(0xFFFF55), // Yellow
       new THREE.Color(0xFFFFFF), // White
     ],
+  },
+  {
+    name: "VGA (256 Colors)",
+    resolution: new THREE.Vector2(640, 480),
+    colorCount: 256,
   },
   {
     name: "Commodore 64",
@@ -657,6 +682,14 @@ export const retroPlatforms = [
       new THREE.Color(0x008080), // Teal
       new THREE.Color(0xC0C0C0), // Silver
       new THREE.Color(0x808080), // Gray
+    ],
+  },
+  {
+    name: "IBM 5151 (Green Screen)",
+    resolution: new THREE.Vector2(720, 350),
+    colorPalette: [
+      new THREE.Color(0x003300), // Typical green phosphor (dark green)
+      new THREE.Color(0x99FF99), // Typical green phosphor (light green)
     ],
   },
 ];
