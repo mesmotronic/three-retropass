@@ -49,15 +49,18 @@ export const RetroShader: RetroShaderParameters = {
       15.0 / 16.0, 7.0 / 16.0, 13.0 / 16.0, 5.0 / 16.0
     );
 
-    // Quantize color to palette index for N colors (N = 2..4096)
-    int quantizeToPaletteIndex(vec3 c, int colorCount) {
-      // Find the number of steps per channel
-      int steps = int(pow(float(colorCount), 1.0/3.0) + 0.5);
-      steps = max(1, steps);
-      int r = int(clamp(floor(c.r * float(steps - 1) + 0.5), 0.0, float(steps - 1)));
-      int g = int(clamp(floor(c.g * float(steps - 1) + 0.5), 0.0, float(steps - 1)));
-      int b = int(clamp(floor(c.b * float(steps - 1) + 0.5), 0.0, float(steps - 1)));
-      return r * steps * steps + g * steps + b;
+    // Optimized: Directly quantize to the nearest cube color, no brute-force search
+    vec3 quantizeToNearestCubeColor(vec3 c, int colorCount) {
+      // Find largest N such that N^3 <= colorCount
+      float stepsF = floor(pow(float(colorCount), 1.0/3.0));
+      float maxIdx = stepsF - 1.0;
+
+      // Quantize each channel to nearest step
+      float r = floor(c.r * maxIdx + 0.5) / maxIdx;
+      float g = floor(c.g * maxIdx + 0.5) / maxIdx;
+      float b = floor(c.b * maxIdx + 0.5) / maxIdx;
+
+      return vec3(r, g, b);
     }
 
     void main() {
@@ -83,7 +86,7 @@ export const RetroShader: RetroShaderParameters = {
 
       vec3 closestColor = vec3(0.0);
 
-      // By default we use brute-force for small palettes, quantize for large
+      // By default we use brute-force small palettes, quantize large
       if (isQuantized == false || colorCount < 64) {
         float minDist = 1e6;
         for (int i = 0; i < colorCount; i++) {
@@ -95,9 +98,7 @@ export const RetroShader: RetroShaderParameters = {
           }
         }
       } else {
-        int idx = quantizeToPaletteIndex(c, colorCount);
-        float paletteIndex = (float(idx) + 0.5) / float(colorCount);
-        closestColor = texture2D(colorTexture, vec2(paletteIndex, 0.5)).rgb;
+        closestColor = quantizeToNearestCubeColor(c, colorCount);
       }
 
       gl_FragColor = vec4(closestColor, 1.0);
