@@ -42,6 +42,11 @@ export const retroPlatforms = [
     ],
   },
   {
+    name: "Atari ST (Low Resolution, 512 Colors)",
+    resolution: new THREE.Vector2(320, 200),
+    colorCount: 512,
+  },
+  {
     name: "CGA (Low Resolution)",
     resolution: new THREE.Vector2(320, 200),
     colorPalette: [
