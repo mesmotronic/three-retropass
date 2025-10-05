@@ -25,6 +25,10 @@ a {
   background-color: black;
 }
 
+canvas {
+  background-color: #bfe3dd;
+}
+
 #info {
   position: absolute;
   bottom: 15px;
