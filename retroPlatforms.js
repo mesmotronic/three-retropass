@@ -79,7 +79,7 @@ export const retroPlatforms = [
     ],
   },
   {
-    name: "CGA (Low Res, Palette 1)",
+    name: "CGA (Mode 4, Palette 1)",
     resolution: new THREE.Vector2(320, 200),
     colorPalette: [
       new THREE.Color(0x000000), // Black (Background Color)
@@ -89,7 +89,7 @@ export const retroPlatforms = [
     ],
   },
   {
-    name: "CGA (Low Res, Palette 0)",
+    name: "CGA (Mode 4, Palette 0)",
     resolution: new THREE.Vector2(320, 200),
     colorPalette: [
       new THREE.Color(0x000000), // Black (Background Color)
