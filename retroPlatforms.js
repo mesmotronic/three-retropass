@@ -93,9 +93,9 @@ export const retroPlatforms = [
     resolution: new THREE.Vector2(320, 200),
     colorPalette: [
       new THREE.Color(0x000000), // Black (Background Color)
-      new THREE.Color(0xAA0000), // Red
-      new THREE.Color(0x00AA00), // Green
-      new THREE.Color(0xAA5500), // Brown
+      new THREE.Color(0xFF5555), // Red
+      new THREE.Color(0x55FF55), // Green
+      new THREE.Color(0xFFFF55), // Brown
     ],
   },
   {
