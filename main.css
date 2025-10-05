@@ -1,7 +1,7 @@
 html,
 body {
   background-color: #bfe3dd;
-  color: black;
+  color: #666;
   margin: 0;
   padding: 0;
   overflow: hidden;
@@ -20,12 +20,31 @@ a {
   text-decoration: none;
 }
 
+#container {
+  position: relative;
+  background-color: black;
+}
+
 #info {
   position: absolute;
   bottom: 15px;
   right: 15px;
   text-align: right;
   left: 15px;
+}
+
+.fixed-ratio {
+  #container {
+    aspect-ratio: 4 / 3;
+    padding: 8px;
+    border-radius: 12px;
+    box-sizing: border-box;
+    box-shadow: 0 4px 42px rgba(0, 0, 0, 0.75);
+  }
+
+  canvas {
+    border-radius: 4px;
+  }
 }
 
 @media screen and (max-width: 600px) {

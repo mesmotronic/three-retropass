@@ -23,7 +23,7 @@ const clock = new THREE.Clock();
 const container = document.getElementById('container');
 
 const stats = new Stats();
-container.appendChild(stats.dom);
+document.body.appendChild(stats.dom);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(Math.min(2.0, window.devicePixelRatio));
@@ -96,6 +96,7 @@ let selectedPlatform = retroPlatforms[0];
 gui.add(retroPass, 'enabled').name('Use RetroPass?');
 gui.add(crtPass, 'enabled').name('Use CrtPass?');
 gui.add(params, 'fixedRatio').name('Use 4:3 Ratio?').onFinishChange(updateControllers);
+gui.close();
 
 const examplesFolder = gui.addFolder('Example Retro Platforms');
 examplesFolder.add(params, 'platform', platformNames).name('Platform / Palette').onChange(name => {
@@ -150,7 +151,6 @@ function updateControllers() {
   resizeHandler();
 };
 
-
 function animate() {
 
   mixer.update(clock.getDelta());
@@ -167,15 +167,20 @@ function resizeHandler() {
   const { innerWidth, innerHeight } = window;
   let width, height;
 
-  if (!params.fixedRatio) {
-    width = innerWidth;
-    height = innerHeight;
-  } else if (innerWidth > innerHeight) {
-    height = innerHeight;
-    width = height / 3 * 4;
+  if (params.fixedRatio) {
+    const padding = 48;
+    document.body.classList.add('fixed-ratio');
+    if (innerWidth > innerHeight * 1.25) {
+      height = innerHeight - padding;
+      width = height / 3 * 4;
+    } else {
+      width = innerWidth - padding;
+      height = width / 4 * 3;
+    }
   } else {
+    document.body.classList.remove('fixed-ratio');
     width = innerWidth;
-    height = width / 4 * 3;
+    height = innerHeight;
   }
 
   camera.aspect = width / height;
