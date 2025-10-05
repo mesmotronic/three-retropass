@@ -57,13 +57,25 @@ export const retroPlatforms = [
     colorCount: 4096,
   },
   {
-    name: "CGA (Low Res, Palette 0)",
-    resolution: new THREE.Vector2(320, 200),
+    name: "Atari Lynx",
+    resolution: new THREE.Vector2(160, 102),
     colorPalette: [
-      new THREE.Color(0x000000), // Black (Background Color)
-      new THREE.Color(0x00AAAA), // Cyan
-      new THREE.Color(0xAA00AA), // Magenta
-      new THREE.Color(0xFFFFFF), // White (High-Intensity Light Gray)
+      new THREE.Color(0xbfe4dd),
+      new THREE.Color(0x52473e),
+      new THREE.Color(0x1f1d1d),
+      new THREE.Color(0x312d2b),
+      new THREE.Color(0x3b3e3e),
+      new THREE.Color(0x734f42),
+      new THREE.Color(0xaf7d73),
+      new THREE.Color(0xf1ddce),
+      new THREE.Color(0x6f6f62),
+      new THREE.Color(0x9b5d51),
+      new THREE.Color(0xb9afa4),
+      new THREE.Color(0xec8985),
+      new THREE.Color(0x789e90),
+      new THREE.Color(0x9A6E33),
+      new THREE.Color(0xF6C37A),
+      new THREE.Color(0xffffff),
     ],
   },
   {
@@ -71,9 +83,19 @@ export const retroPlatforms = [
     resolution: new THREE.Vector2(320, 200),
     colorPalette: [
       new THREE.Color(0x000000), // Black (Background Color)
+      new THREE.Color(0x55FFFF), // Cyan
+      new THREE.Color(0xFF55FF), // Magenta
+      new THREE.Color(0xFFFFFF), // White (High-Intensity Light Gray)
+    ],
+  },
+  {
+    name: "CGA (Low Res, Palette 0)",
+    resolution: new THREE.Vector2(320, 200),
+    colorPalette: [
+      new THREE.Color(0x000000), // Black (Background Color)
       new THREE.Color(0xAA0000), // Red
       new THREE.Color(0x00AA00), // Green
-      new THREE.Color(0xFFFF00), // Yellow (High-Intensity Brown/Dark Yellow)
+      new THREE.Color(0xAA5500), // Brown
     ],
   },
   {
