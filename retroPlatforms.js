@@ -707,6 +707,36 @@ export const retroPlatforms = [
     ],
   },
   {
+    name: "Apple Macintosh (1984)",
+    resolution: new THREE.Vector2(512, 342),
+    colorPalette: [
+      new THREE.Color(0x000000), // Black
+      new THREE.Color(0xFFFFFF), // White
+    ],
+  },
+  {
+    name: "Apple Macintosh II (1987)",
+    resolution: new THREE.Vector2(512, 342),
+    colorPalette: [
+      new THREE.Color(0x000000), // Shade 0 (Black)
+      new THREE.Color(0x111111), // Shade 1
+      new THREE.Color(0x222222), // Shade 2
+      new THREE.Color(0x333333), // Shade 3
+      new THREE.Color(0x444444), // Shade 4
+      new THREE.Color(0x555555), // Shade 5
+      new THREE.Color(0x666666), // Shade 6
+      new THREE.Color(0x777777), // Shade 7
+      new THREE.Color(0x888888), // Shade 8
+      new THREE.Color(0x999999), // Shade 9
+      new THREE.Color(0xAAAAAA), // Shade 10
+      new THREE.Color(0xBBBBBB), // Shade 11
+      new THREE.Color(0xCCCCCC), // Shade 12
+      new THREE.Color(0xDDDDDD), // Shade 13
+      new THREE.Color(0xEEEEEE), // Shade 14
+      new THREE.Color(0xFFFFFF), // Shade 15 (White)
+    ],
+  },
+  {
     name: "IBM 5151 (Green Screen)",
     resolution: new THREE.Vector2(720, 350),
     colorPalette: [
