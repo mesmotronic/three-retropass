@@ -52,11 +52,11 @@ export class RetroPass extends ShaderPass {
    * Pixel resolution to use
    */
   public get resolution(): THREE.Vector2 {
-    return this.uniforms.resolution.value;
+    return this.uniforms.uResolution.value;
   }
   public set resolution(value: THREE.Vector2) {
-    if (!value.equals(this.uniforms.resolution.value)) {
-      this.uniforms.resolution.value.copy(value);
+    if (!value.equals(this.uniforms.uResolution.value)) {
+      this.uniforms.uResolution.value.copy(value);
     }
   }
 
@@ -90,14 +90,14 @@ export class RetroPass extends ShaderPass {
    * The number of colors in the palette
    */
   public get colorCount(): number {
-    return this.uniforms.colorCount.value;
+    return this.uniforms.uColorCount.value;
   }
   public set colorCount(value: number) {
     if (value !== this.colorCount) {
       if (!isValidColorCount(value)) {
         throw new Error(`Invalid colorPalette, must contain between 2 and 4096 colours`);
       }
-      this.uniforms.isQuantized.value = true;
+      this.uniforms.uIsQuantized.value = true;
       this.setColorPalette(createColorPalette(value));
     }
   }
@@ -113,7 +113,7 @@ export class RetroPass extends ShaderPass {
     if (!isValidColorCount(colorCount)) {
       throw new Error(`Invalid colorPalette, must contain between 2 and 4096 colours`);
     }
-    this.uniforms.isQuantized.value = false;
+    this.uniforms.uIsQuantized.value = false;
     this.setColorPalette(colors);
   }
 
@@ -121,20 +121,20 @@ export class RetroPass extends ShaderPass {
    * Whether or not to apply dithering
    */
   public get dithering(): boolean {
-    return this.uniforms.dithering.value;
+    return this.uniforms.uDithering.value;
   }
   public set dithering(value: boolean) {
-    this.uniforms.dithering.value = value;
+    this.uniforms.uDithering.value = value;
   }
 
   /**
    * The amount of dithering to apply, typically 0.0 to 1.0
    */
   public get ditheringOffset(): number {
-    return this.uniforms.ditheringOffset.value;
+    return this.uniforms.uDitheringOffset.value;
   }
   public set ditheringOffset(value: number) {
-    this.uniforms.ditheringOffset.value = value;
+    this.uniforms.uDitheringOffset.value = value;
   }
 
   /**
@@ -150,6 +150,16 @@ export class RetroPass extends ShaderPass {
         this.updateDitheringOffset();
       }
     }
+  }
+
+  /**
+   * Whether to invert the image before processing
+   */
+  public get inverted(): boolean {
+    return this.uniforms.uInverted.value;
+  }
+  public set inverted(value: boolean) {
+    this.uniforms.uInverted.value = value;
   }
 
   /**
@@ -183,9 +193,9 @@ export class RetroPass extends ShaderPass {
     const colorCount = colors?.length;
     const colorTexture = createColorTexture(colors);
 
-    this.uniforms.colorCount.value = colorCount;
-    this.uniforms.colorTexture.value?.dispose();
-    this.uniforms.colorTexture.value = colorTexture;
+    this.uniforms.uColorCount.value = colorCount;
+    this.uniforms.uColorTexture.value?.dispose();
+    this.uniforms.uColorTexture.value = colorTexture;
 
     if (this.autoDitheringOffset) {
       this.updateDitheringOffset();

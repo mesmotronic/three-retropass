@@ -13,12 +13,13 @@ interface RetroShaderParameters extends THREE.ShaderMaterialParameters {
 export const RetroShader: RetroShaderParameters = {
   uniforms: {
     tDiffuse: { value: null },
-    resolution: { value: new THREE.Vector2(320, 200) },
-    colorCount: { value: 16 },
-    colorTexture: { value: createColorTexture(createColorPalette(16)) },
-    dithering: { value: true },
-    ditheringOffset: { value: 0.2 },
-    isQuantized: { value: true },
+    uResolution: { value: new THREE.Vector2(320, 200) },
+    uColorCount: { value: 16 },
+    uColorTexture: { value: createColorTexture(createColorPalette(16)) },
+    uDithering: { value: true },
+    uDitheringOffset: { value: 0.2 },
+    uIsQuantized: { value: true },
+    uInverted: { value: false },
   },
 
   vertexShader: /* glsl */ `
@@ -31,12 +32,13 @@ export const RetroShader: RetroShaderParameters = {
 
   fragmentShader: /* glsl */ `
     uniform sampler2D tDiffuse;
-    uniform vec2 resolution;
-    uniform int colorCount;
-    uniform sampler2D colorTexture;
-    uniform bool dithering;
-    uniform float ditheringOffset;
-    uniform bool isQuantized;
+    uniform vec2 uResolution;
+    uniform int uColorCount;
+    uniform sampler2D uColorTexture;
+    uniform bool uDithering;
+    uniform float uDitheringOffset;
+    uniform bool uIsQuantized;
+    uniform bool uInverted;
     uniform bool isSrgb;
 
     varying vec2 vUv;
@@ -65,20 +67,24 @@ export const RetroShader: RetroShaderParameters = {
 
     void main() {
       // Compute retro UV for pixelation
-      vec2 retroUV = (floor(vUv * resolution) + 0.5) / resolution;
+      vec2 retroUV = (floor(vUv * uResolution) + 0.5) / uResolution;
       vec3 c = texture2D(tDiffuse, retroUV).rgb;
 
-      // Compute retro pixel coordinates
-      vec2 retroCoord = floor(vUv * resolution);
+      if (uInverted) {
+        c = 1.0 - c;
+      }
 
-      if (dithering) {
+      // Compute retro pixel coordinates
+      vec2 retroCoord = floor(vUv * uResolution);
+
+      if (uDithering) {
         float offset = 0.0;
         // Skip dithering for pure black pixels
         if (!(c.r == 0.0 && c.g == 0.0 && c.b == 0.0)) {
           int ix = int(mod(retroCoord.x, 4.0));
           int iy = int(mod(retroCoord.y, 4.0));
           float bayer = bayer4x4[iy * 4 + ix];
-          offset = (bayer - 0.5) * ditheringOffset;
+          offset = (bayer - 0.5) * uDitheringOffset;
         }
         c += vec3(offset);
         c = clamp(c, 0.0, 1.0);
@@ -87,10 +93,10 @@ export const RetroShader: RetroShaderParameters = {
       vec3 closestColor = vec3(0.0);
 
       // By default we use brute-force small palettes, quantize large
-      if (isQuantized == false || colorCount < 27) {
+      if (uIsQuantized == false || uColorCount < 27) {
         float minDist = 1e6;
-        for (int i = 0; i < colorCount; i++) {
-          vec3 paletteColor = texture2D(colorTexture, vec2((float(i) + 0.5) / float(colorCount), 0.5)).rgb;
+        for (int i = 0; i < uColorCount; i++) {
+          vec3 paletteColor = texture2D(uColorTexture, vec2((float(i) + 0.5) / float(uColorCount), 0.5)).rgb;
           float dist = distance(c, paletteColor);
           if (dist < minDist) {
             minDist = dist;
@@ -98,7 +104,7 @@ export const RetroShader: RetroShaderParameters = {
           }
         }
       } else {
-        closestColor = quantizeToNearestCubeColor(c, colorCount);
+        closestColor = quantizeToNearestCubeColor(c, uColorCount);
       }
 
       gl_FragColor = vec4(closestColor, 1.0);

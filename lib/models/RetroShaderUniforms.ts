@@ -6,12 +6,13 @@ import { IUniform } from 'three';
  */
 export interface RetroShaderUniforms {
   tDiffuse: IUniform<THREE.Texture | null>;
-  resolution: IUniform<THREE.Vector2>;
-  colorCount: IUniform<number>;
-  colorTexture: IUniform<THREE.DataTexture>;
-  dithering: IUniform<boolean>;
-  ditheringOffset: IUniform<number>;
-  isQuantized: IUniform<boolean>;
+  uResolution: IUniform<THREE.Vector2>;
+  uColorCount: IUniform<number>;
+  uColorTexture: IUniform<THREE.DataTexture>;
+  uDithering: IUniform<boolean>;
+  uDitheringOffset: IUniform<number>;
+  uIsQuantized: IUniform<boolean>;
+  uInverted: IUniform<boolean>;
 
   [uniform: string]: THREE.IUniform<any>;
 }

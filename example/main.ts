@@ -151,6 +151,7 @@ retroFolder.add(retroPass, 'ditheringOffset', 0, 1, 0.05).name('Dithering Offset
   retroPass.ditheringOffset = value;
 });
 retroFolder.add(retroPass, 'autoDitheringOffset').name('Auto Offset?');
+retroFolder.add(retroPass, 'inverted').name('Inverted');
 
 // Handle window resize
 window.addEventListener('resize', () => {
