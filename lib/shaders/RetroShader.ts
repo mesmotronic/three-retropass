@@ -39,7 +39,6 @@ export const RetroShader: RetroShaderParameters = {
     uniform float uDitheringOffset;
     uniform bool uIsQuantized;
     uniform bool uInverted;
-    uniform bool isSrgb;
 
     varying vec2 vUv;
 
