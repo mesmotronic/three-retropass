@@ -79,3 +79,9 @@ Original
 ![Screenshot 2025-05-16 at 22 52 14](https://github.com/user-attachments/assets/980d0cee-39a0-43e5-b816-937412b8e4d9)
 320x200 256 colours (web safe)
 320x200 256 colours (web safe)
+
+## License
+
+This project is licensed under the BSD 2-Clause License - see the [LICENSE](LICENSE) file for details.
+
+Copyright (c) 2025, Mesmotronic Limited
