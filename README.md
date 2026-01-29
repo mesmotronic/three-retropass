@@ -2,7 +2,7 @@
 
 Inspired by [STDOOM](https://github.com/indyjo/STDOOM), RetroPass is a WebGL post-processing effect for Three.js that enables you to give your project a retro look and feel, with pixelation and colour quantisation for a nostalgic, low-res aesthetic — ideal for games or apps evoking classic video game vibes.
 
-You can choose from the default 2, 4, 16, 64, 256, 512 and 4096 colour palettes, or create a custom palette of any any size from 2 to 4096 colours.
+Specify any number of colours up to 4096 to create a performance optimised (quantised cube) palette, or create a custom palette of any size from 2 to 4096 colours.
 
 [See it in action.](https://mesmotronic.github.io/three-retropass/)
 
@@ -51,13 +51,16 @@ animate();
 
 ## API Reference
 
-| Name           | Description                                                                               | Constructor | Property |
-| -------------- | ----------------------------------------------------------------------------------------- | ----------- | -------- |
-| `resolution`   | `THREE.Vector2` object specifying the resolution of the retro effect (default: 320x200).  | ✓           | ✓        |
-| `colorCount`   | Number indicating the number of colours in the palette (default: 16).                     | ✓           | ✓        |
-| `colorPalette` | Array of `THREE.Color` objects defining the colour palette (default: predefined palette). | ✓           | ✓        |
-| `dithering`    | Boolean to enable or disable dithering (default: true).                                   | ✓           | ✓        |
-| `pixelRatio`   | Number for the pixel ratio, used to override resolution if set (default: 0).              | ✓           | ✓        |
+| Name                  | Description                                                         | Constructor | Property |
+| --------------------- | ------------------------------------------------------------------- | ----------- | -------- |
+| `resolution`          | `THREE.Vector2` specifying the resolution of the retro effect.      | ✓           | ✓        |
+| `autoResolution`      | `Boolean` to enable or disable automatic resolution handling.       | ✓           | ✓        |
+| `pixelRatio`          | `Number` for the pixel ratio, overrides resolution if set.          | ✓           | ✓        |
+| `colorCount`          | `Number` indicating the number of colours in the palette.           | ✓           | ✓        |
+| `colorPalette`        | Array of `THREE.Color` objects defining the colour palette.         | ✓           | ✓        |
+| `dithering`           | `Boolean` to enable or disable dithering.                           | ✓           | ✓        |
+| `ditheringOffset`     | `Number` controlling the dithering offset.                          | ✓           | ✓        |
+| `autoDitheringOffset` | `Boolean` to enable or disable automatic dithering offset handling. | ✓           | ✓        |
 
 ## Screenshots
 
