@@ -11,17 +11,20 @@ export default defineConfig({
   ],
   build: {
     lib: {
-      entry: resolve(__dirname, 'lib/main.ts'),
+      entry: {
+        'webgl/index': resolve(__dirname, 'lib/webgl/index.ts'),
+        'webgpu/index': resolve(__dirname, 'lib/webgpu/index.ts'),
+      },
       formats: ['es']
     },
     rollupOptions: {
       external: [
         'three',
-        /^three\/addons\//,
-        /^three\/examples\//,
+        /^three\//,
       ],
       output: {
         assetFileNames: 'assets/[name][extname]',
+        chunkFileNames: '[name].js',
         entryFileNames: '[name].js',
       },
     },

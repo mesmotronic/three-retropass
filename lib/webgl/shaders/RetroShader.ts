@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { RetroShaderUniforms } from "../models/RetroShaderUniforms";
-import { createColorTexture } from "../utils/createColorTexture";
-import { createColorPalette } from "../utils/createColorPalette";
+import { createColorTexture } from "../../utils/createColorTexture";
+import { createColorPalette } from "../../utils/createColorPalette";
 
 interface RetroShaderParameters extends THREE.ShaderMaterialParameters {
   uniforms: RetroShaderUniforms;

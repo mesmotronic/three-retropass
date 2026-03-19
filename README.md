@@ -16,6 +16,8 @@ Requires `three` as a peer dependency.
 
 ## Usage
 
+### WebGL
+
 Here’s an example of how to use RetroPass in your Three.js project, showing a basic scene with a retro effect at 320x200 resolution with 16 colours and dithering enabled.
 
 ```javascript
@@ -47,6 +49,51 @@ function animate() {
   composer.render();
 }
 animate();
+```
+
+### WebGPU
+
+Here's the equivalent example using RetroPass as a TSL node with WebGPURenderer and RenderPipeline.
+
+```javascript
+import * as THREE from "three";
+import { WebGPURenderer, RenderPipeline } from "three/webgpu";
+import { pass } from "three/tsl";
+import { retroPass } from "@mesmotronic/three-retropass/webgpu";
+
+// Scene setup
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new WebGPURenderer();
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+// Post processing setup
+const scenePass = pass(scene, camera);
+const retroNode = retroPass(scenePass.getTextureNode(), {
+  resolution: new THREE.Vector2(320, 200),
+  colorCount: 16,
+  dithering: true,
+});
+
+const renderPipeline = new RenderPipeline(renderer);
+renderPipeline.outputNode = retroNode;
+
+// Render loop
+async function animate() {
+  requestAnimationFrame(animate);
+  await renderPipeline.renderAsync();
+}
+animate();
+```
+
+Properties can be updated at any time:
+
+```javascript
+retroNode.colorCount = 4;
+retroNode.dithering = false;
+retroNode.inverted = true;
 ```
 
 ## API Reference

@@ -1,10 +1,10 @@
 import * as THREE from 'three';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
-import { RetroPassParameters } from '../models/RetroPassParameters';
+import { RetroPassParameters } from '../../models/RetroPassParameters';
 import { RetroShader } from '../shaders/RetroShader';
-import { createColorPalette } from '../utils/createColorPalette';
-import { createColorTexture } from '../utils/createColorTexture';
-import { isValidColorCount } from "../utils/isValidColorCount";
+import { createColorPalette } from '../../utils/createColorPalette';
+import { createColorTexture } from '../../utils/createColorTexture';
+import { isValidColorCount } from "../../utils/isValidColorCount";
 
 /**
  * Post-processing pass for applying a retro-style effect with color quantization and dithering
