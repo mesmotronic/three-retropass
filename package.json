@@ -36,6 +36,7 @@
   },
   "homepage": "https://github.com/mesmotronic/three-retropass#readme",
   "scripts": {
+    "dev": "vite",
     "build": "tsc -b ./tsconfig.lib.json",
     "lint": "eslint .",
     "prepublish": "npm run build",
